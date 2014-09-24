@@ -84,17 +84,38 @@ public class Tree {
 //            });
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<Resource> source = dragSource.getTreeItem();
+                TreeItem<Resource> target = this.getTreeItem();
+                if (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target)) {
+                    mouseDragEvent.consume();
+                    return;
+                }
+                
                 source.getParent().getChildren().remove(source);
                 this.getTreeItem().getChildren().add(source);
                 mouseDragEvent.consume();
             });
         }
 
+        private boolean isChild(TreeItem<Resource> source, TreeItem<Resource> target) {
+            boolean result = false;
+            if (source.getChildren().contains(target)) {
+                result = true;
+            } else {
+                for(TreeItem<Resource> child : source.getChildren()) {
+                    result = isChild(child, target);
+                    if (result == true) {
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+        
         @Override
         protected void updateItem(Resource item, boolean empty) {
             super.updateItem(item, empty);
             this.item = item;
-            if(item != null) {
+            if (item != null) {
                 setText(item.getName());
                 setGraphic(item.getIcon());
             } else {
