@@ -41,7 +41,7 @@ public class Tree {
     public void addResource(Resource resource) {
         TreeItem<Resource> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
-        root.getChildren().add(treeItem);
+        addOrdered(root, treeItem);
     }
     
     /**
@@ -54,9 +54,32 @@ public class Tree {
         TreeItem<Resource> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<Resource> parentTreeItem = resourceToTreeItemMap.get(parent);
-        parentTreeItem.getChildren().add(treeItem);
+        addOrdered(parentTreeItem, treeItem);
     }
 
+    //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
+    private void addOrdered(TreeItem<Resource> parent, TreeItem<Resource> child) {
+        if (parent.getChildren().size() == 0) {
+            parent.getChildren().add(child);
+            return;
+        }
+        for (int index = 0; index < parent.getChildren().size(); index++) {
+            TreeItem<Resource> current = parent.getChildren().get(index);
+            if (current.getValue() instanceof ParentResource && !(child.getValue() instanceof ParentResource)) {
+                continue;
+            }
+            if (!(current.getValue() instanceof ParentResource) && child.getValue() instanceof ParentResource) {
+                parent.getChildren().add(index, child);
+                return;
+            }
+            if (current.getValue().getName().compareTo(child.getValue().getName()) > 0) {
+                parent.getChildren().add(index, child);
+                return;
+            }
+        }
+        parent.getChildren().add(child);
+    }
+    
     private DnDCell dragSource;
     
     private class DnDCell extends TreeCell<Resource> {
@@ -85,23 +108,22 @@ public class Tree {
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<Resource> source = dragSource.getTreeItem();
                 TreeItem<Resource> target = this.getTreeItem();
-                if (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target)) {
+                if (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source)) {
                     mouseDragEvent.consume();
                     return;
                 }
-                
                 source.getParent().getChildren().remove(source);
-                this.getTreeItem().getChildren().add(source);
+                addOrdered(this.getTreeItem(), source);
                 mouseDragEvent.consume();
             });
         }
-
+        
         private boolean isChild(TreeItem<Resource> source, TreeItem<Resource> target) {
             boolean result = false;
             if (source.getChildren().contains(target)) {
                 result = true;
             } else {
-                for(TreeItem<Resource> child : source.getChildren()) {
+                for (TreeItem<Resource> child : source.getChildren()) {
                     result = isChild(child, target);
                     if (result == true) {
                         break;
