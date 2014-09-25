@@ -13,7 +13,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
 public class Tree {
-    private final TreeItem<Resource> root = new TreeItem<>();
+    private final TreeItem<Resource> root = new TreeItem<>(new FolderResource(""));
     private final TreeView<Resource> tree = new TreeView<>(root);
     private final Map<Resource, TreeItem<Resource>> resourceToTreeItemMap = new HashMap<>();
     public static final Node createFolderIcon() {
@@ -58,26 +58,26 @@ public class Tree {
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    private void addOrdered(TreeItem<Resource> parent, TreeItem<Resource> child) {
-        if (parent.getChildren().size() == 0) {
-            parent.getChildren().add(child);
+    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
+        if (target.getChildren().size() == 0) {
+            target.getChildren().add(child);
             return;
         }
-        for (int index = 0; index < parent.getChildren().size(); index++) {
-            TreeItem<Resource> current = parent.getChildren().get(index);
+        for (int index = 0; index < target.getChildren().size(); index++) {
+            TreeItem<Resource> current = target.getChildren().get(index);
             if (current.getValue() instanceof ParentResource && !(child.getValue() instanceof ParentResource)) {
                 continue;
             }
             if (!(current.getValue() instanceof ParentResource) && child.getValue() instanceof ParentResource) {
-                parent.getChildren().add(index, child);
+                target.getChildren().add(index, child);
                 return;
             }
             if (current.getValue().getName().compareTo(child.getValue().getName()) > 0) {
-                parent.getChildren().add(index, child);
+                target.getChildren().add(index, child);
                 return;
             }
         }
-        parent.getChildren().add(child);
+        target.getChildren().add(child);
     }
     
     private DnDCell dragSource;
@@ -108,12 +108,15 @@ public class Tree {
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<Resource> source = dragSource.getTreeItem();
                 TreeItem<Resource> target = this.getTreeItem();
+                if(target == null) {
+                    target = root;
+                }
                 if (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source)) {
                     mouseDragEvent.consume();
                     return;
                 }
                 source.getParent().getChildren().remove(source);
-                addOrdered(this.getTreeItem(), source);
+                addOrdered(target, source);
                 mouseDragEvent.consume();
             });
         }
