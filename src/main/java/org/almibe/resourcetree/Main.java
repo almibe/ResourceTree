@@ -11,12 +11,6 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setScene(new Scene(tree.getTree()));
-        primaryStage.show();
-        Platform.runLater(() -> setuptree());
-    }
-    
-    private void setuptree() {
         FolderResource folder = new FolderResource("Scripts");
         tree.addResource(folder);
         tree.addResource(new FolderResource("Docs"));
@@ -25,9 +19,10 @@ public class Main extends Application {
         tree.addResource(new FileResource("Webservice Checker"), folder);
         tree.addResource(new FolderResource("Agile Docs"));
         tree.addResource(new FileResource("Agile Manifestor"));
-        tree.clear();
+        primaryStage.setScene(new Scene(tree.getTree()));
+        primaryStage.show();
     }
-    
+
     public static void main(String[] args) {
         Main.launch(args);
     }

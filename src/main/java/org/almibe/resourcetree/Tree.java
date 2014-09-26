@@ -64,7 +64,7 @@ public class Tree {
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    private void addOrdered1(TreeItem<Resource> target, TreeItem<Resource> child) {
+    private void insertResource(TreeItem<Resource> target, TreeItem<Resource> child) {
         if (target.getChildren().size() == 0) {
             target.getChildren().add(child);
             return;
@@ -87,8 +87,11 @@ public class Tree {
     }
     
     private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
-        addOrdered1(target, child);
-        tree.getSelectionModel().select(child);
+        TreeItem<Resource> selected = tree.getSelectionModel().getSelectedItem();
+        insertResource(target, child);
+        if(selected != null) {
+            tree.getSelectionModel().select(child);
+        }
     }
     
     private DnDCell dragSource;
