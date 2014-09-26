@@ -2,6 +2,7 @@ package org.almibe.resourcetree;
 
 import java.util.HashMap;
 import java.util.Map;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeCell;
@@ -24,7 +25,8 @@ public class Tree {
         return new ImageView(
         new Image(Tree.class.getResourceAsStream("Page_white.png")));
     }
-    {
+    
+    public Tree() {
         tree.showRootProperty().set(false);
         tree.setCellFactory((TreeView<Resource> tree) -> new DnDCell(tree));
     }
@@ -58,7 +60,7 @@ public class Tree {
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
+    private void addOrdered1(TreeItem<Resource> target, TreeItem<Resource> child) {
         if (target.getChildren().size() == 0) {
             target.getChildren().add(child);
             return;
@@ -78,6 +80,11 @@ public class Tree {
             }
         }
         target.getChildren().add(child);
+    }
+    
+    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
+        addOrdered1(target, child);
+        tree.getSelectionModel().select(child);
     }
     
     private DnDCell dragSource;
