@@ -25,6 +25,7 @@ public class Main extends Application {
         tree.addResource(new FileResource("Webservice Checker"), folder);
         tree.addResource(new FolderResource("Agile Docs"));
         tree.addResource(new FileResource("Agile Manifestor"));
+        tree.clear();
     }
     
     public static void main(String[] args) {

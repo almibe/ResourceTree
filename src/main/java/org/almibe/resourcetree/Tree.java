@@ -2,7 +2,6 @@ package org.almibe.resourcetree;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeCell;
@@ -33,6 +32,11 @@ public class Tree {
 
     public Parent getTree() {
         return this.tree;
+    }
+    
+    public void clear() {
+        this.tree.getFocusModel().focus(-1);
+        this.tree.getSelectionModel().select(-1);
     }
     
     /**
