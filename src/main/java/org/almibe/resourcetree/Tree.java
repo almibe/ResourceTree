@@ -2,6 +2,8 @@ package org.almibe.resourcetree;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeCell;
@@ -16,6 +18,13 @@ public class Tree {
     private final TreeItem<Resource> root = new TreeItem<>(new FolderResource(""));
     private final TreeView<Resource> tree = new TreeView<>(root);
     private final Map<Resource, TreeItem<Resource>> resourceToTreeItemMap = new HashMap<>();
+    private final ListChangeListener<TreeItem<Resource>> listener = c -> {
+        c.next();
+        if (tree.getSelectionModel().getSelectedItem() != null && c.getAddedSize() == 1) {
+            TreeItem<Resource> ti = c.getAddedSubList().get(0);
+            tree.getSelectionModel().select(ti);
+        }
+    };
     public static final Node createFolderIcon() {
         return new ImageView(
         new Image(Tree.class.getResourceAsStream("Icons-mini-folder.gif")));
@@ -28,6 +37,7 @@ public class Tree {
     public Tree() {
         tree.showRootProperty().set(false);
         tree.setCellFactory((TreeView<Resource> tree) -> new DnDCell(tree));
+        root.getChildren().addListener(listener);
     }
 
     public Parent getTree() {
@@ -46,6 +56,7 @@ public class Tree {
      */
     public void addResource(Resource resource) {
         TreeItem<Resource> treeItem = new TreeItem<>(resource);
+        treeItem.getChildren().addListener(listener);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(root, treeItem);
     }
@@ -58,13 +69,14 @@ public class Tree {
      */
     public void addResource(Resource resource, ParentResource parent) {
         TreeItem<Resource> treeItem = new TreeItem<>(resource);
+        treeItem.getChildren().addListener(listener);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<Resource> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    private void insertResource(TreeItem<Resource> target, TreeItem<Resource> child) {
+    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
         if (target.getChildren().size() == 0) {
             target.getChildren().add(child);
             return;
@@ -85,15 +97,7 @@ public class Tree {
         }
         target.getChildren().add(child);
     }
-    
-    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
-        TreeItem<Resource> selected = tree.getSelectionModel().getSelectedItem();
-        insertResource(target, child);
-        if(selected != null) {
-            tree.getSelectionModel().select(child);
-        }
-    }
-    
+
     private DnDCell dragSource;
     
     private class DnDCell extends TreeCell<Resource> {
