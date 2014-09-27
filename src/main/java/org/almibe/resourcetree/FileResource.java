@@ -1,6 +1,8 @@
 package org.almibe.resourcetree;
 
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class FileResource implements Resource {
     private String name;
@@ -16,7 +18,7 @@ public class FileResource implements Resource {
 
     @Override
     public Node getIcon() {
-        return Tree.createFileIcon();
+        return  new ImageView(new Image(Tree.class.getResourceAsStream("Page_white.png")));
     }
     
 }
