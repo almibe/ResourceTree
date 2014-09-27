@@ -3,10 +3,13 @@ package org.almibe.resourcetree;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -82,7 +85,7 @@ public class Tree {
     }
 
     private DraggableCell dragSource;
-    
+
     private class DraggableCell extends TreeCell<Resource> {
         private Resource item;
         
@@ -92,27 +95,33 @@ public class Tree {
                     return;
                 }
                 startFullDrag();
+                tree.setCursor(Cursor.HAND);
                 dragSource = (DraggableCell)event.getSource();
                 event.consume();
             });
-//            setOnMouseDragEntered((MouseDragEvent mouseDragEvent) -> {
-//                EventTarget et = mouseDragEvent.getTarget();
-//                if(et instanceof DnDCell) {
-//                    dropTarget = (DnDCell) et;
-//                }
-//                mouseDragEvent.consume();
-//            });
-//            setOnMouseDragExited((MouseDragEvent event) -> {
-//                dropTarget = null; //TODO does exit always get called before entered?
-//                event.consume();
-//            });
+            setOnMouseDragEntered((MouseDragEvent mouseDragEvent) -> {
+                TreeItem<Resource> source = dragSource.getTreeItem();
+                TreeItem<Resource> target = this.getTreeItem();
+                if(target == null) { target = root; }
+                if(isValidDrop(source, target)) {
+                    tree.setCursor(Cursor.HAND);
+                } else {
+                    tree.setCursor(new ImageCursor(new Image(Tree.class.getResourceAsStream("cross.png"))));
+                }
+                mouseDragEvent.consume();
+            });
+            setOnMouseDragExited((MouseDragEvent event) -> {
+                tree.setCursor(Cursor.DEFAULT);
+                event.consume();
+            });
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<Resource> source = dragSource.getTreeItem();
                 TreeItem<Resource> target = this.getTreeItem();
+                tree.setCursor(Cursor.DEFAULT);
                 if(target == null) {
                     target = root;
                 }
-                if (isValidDrop(source, target)) {
+                if (!isValidDrop(source, target)) {
                     mouseDragEvent.consume();
                     return;
                 }
@@ -123,7 +132,7 @@ public class Tree {
         }
 
         private boolean isValidDrop(TreeItem<Resource> source, TreeItem<Resource> target) {
-            return (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source));
+            return !(source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source));
         }
 
         private boolean isChild(TreeItem<Resource> source, TreeItem<Resource> target) {
