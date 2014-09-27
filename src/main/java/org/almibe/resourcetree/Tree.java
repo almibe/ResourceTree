@@ -85,6 +85,7 @@ public class Tree {
     }
 
     private DraggableCell dragSource;
+    private Image cross = new Image(Tree.class.getResourceAsStream("cross24.png"));
 
     private class DraggableCell extends TreeCell<Resource> {
         private Resource item;
@@ -95,7 +96,7 @@ public class Tree {
                     return;
                 }
                 startFullDrag();
-                tree.setCursor(Cursor.HAND);
+                tree.setCursor(Cursor.MOVE);
                 dragSource = (DraggableCell)event.getSource();
                 event.consume();
             });
@@ -104,9 +105,9 @@ public class Tree {
                 TreeItem<Resource> target = this.getTreeItem();
                 if(target == null) { target = root; }
                 if(isValidDrop(source, target)) {
-                    tree.setCursor(Cursor.HAND);
+                    tree.setCursor(Cursor.MOVE);
                 } else {
-                    tree.setCursor(new ImageCursor(new Image(Tree.class.getResourceAsStream("cross.png"))));
+                    tree.setCursor(new ImageCursor(cross, cross.getWidth()/2, cross.getHeight()/2));
                 }
                 mouseDragEvent.consume();
             });
