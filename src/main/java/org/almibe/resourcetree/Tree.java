@@ -21,6 +21,8 @@ public class Tree {
     public Tree() {
         tree.showRootProperty().set(false);
         tree.setCellFactory((TreeView<Resource> tree) -> new DraggableCell(tree));
+        String style = this.getClass().getResource("treeview.css").toExternalForm();
+        tree.getStylesheets().add(style);
     }
 
     public Parent getTree() {
@@ -86,6 +88,7 @@ public class Tree {
 
     private DraggableCell dragSource;
     private Image cross = new Image(Tree.class.getResourceAsStream("cross24.png"));
+    private final String selectedStyle = "list-cell-selected";
 
     private class DraggableCell extends TreeCell<Resource> {
         private Resource item;
@@ -96,7 +99,6 @@ public class Tree {
                     return;
                 }
                 startFullDrag();
-                tree.setCursor(Cursor.MOVE);
                 dragSource = (DraggableCell)event.getSource();
                 event.consume();
             });
@@ -106,6 +108,7 @@ public class Tree {
                 if(target == null) { target = root; }
                 if(isValidDrop(source, target)) {
                     tree.setCursor(Cursor.MOVE);
+                    this.getStyleClass().add(selectedStyle);
                 } else {
                     tree.setCursor(new ImageCursor(cross, cross.getWidth()/2, cross.getHeight()/2));
                 }
@@ -113,12 +116,14 @@ public class Tree {
             });
             setOnMouseDragExited((MouseDragEvent event) -> {
                 tree.setCursor(Cursor.DEFAULT);
+                this.getStyleClass().remove(selectedStyle);
                 event.consume();
             });
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<Resource> source = dragSource.getTreeItem();
                 TreeItem<Resource> target = this.getTreeItem();
                 tree.setCursor(Cursor.DEFAULT);
+                this.getStyleClass().remove(selectedStyle);
                 if(target == null) {
                     target = root;
                 }
