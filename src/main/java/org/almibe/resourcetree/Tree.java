@@ -3,13 +3,10 @@ package org.almibe.resourcetree;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -17,18 +14,10 @@ public class Tree {
     private final TreeItem<Resource> root = new TreeItem<>(new FolderResource(""));
     private final TreeView<Resource> tree = new TreeView<>(root);
     private final Map<Resource, TreeItem<Resource>> resourceToTreeItemMap = new HashMap<>();
-    public static final Node createFolderIcon() {
-        return new ImageView(
-        new Image(Tree.class.getResourceAsStream("Icons-mini-folder.gif")));
-    }
-    public static final Node createFileIcon() {
-        return new ImageView(
-        new Image(Tree.class.getResourceAsStream("Page_white.png")));
-    }
-    
+
     public Tree() {
         tree.showRootProperty().set(false);
-        tree.setCellFactory((TreeView<Resource> tree) -> new DnDCell(tree));
+        tree.setCellFactory((TreeView<Resource> tree) -> new DraggableCell(tree));
     }
 
     public Parent getTree() {
@@ -92,18 +81,18 @@ public class Tree {
         tree.getSelectionModel().select(child);
     }
 
-    private DnDCell dragSource;
+    private DraggableCell dragSource;
     
-    private class DnDCell extends TreeCell<Resource> {
+    private class DraggableCell extends TreeCell<Resource> {
         private Resource item;
         
-        public DnDCell(final TreeView<Resource> parentTree) {
+        public DraggableCell(final TreeView<Resource> parentTree) {
             setOnDragDetected((MouseEvent event) -> {
                 if (item == null) {
                     return;
                 }
                 startFullDrag();
-                dragSource = (DnDCell)event.getSource();
+                dragSource = (DraggableCell)event.getSource();
                 event.consume();
             });
 //            setOnMouseDragEntered((MouseDragEvent mouseDragEvent) -> {
@@ -123,7 +112,7 @@ public class Tree {
                 if(target == null) {
                     target = root;
                 }
-                if (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source)) {
+                if (isValidDrop(source, target)) {
                     mouseDragEvent.consume();
                     return;
                 }
@@ -132,7 +121,11 @@ public class Tree {
                 mouseDragEvent.consume();
             });
         }
-        
+
+        private boolean isValidDrop(TreeItem<Resource> source, TreeItem<Resource> target) {
+            return (source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source));
+        }
+
         private boolean isChild(TreeItem<Resource> source, TreeItem<Resource> target) {
             boolean result = false;
             if (source.getChildren().contains(target)) {
