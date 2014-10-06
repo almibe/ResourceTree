@@ -87,7 +87,7 @@ public class Tree {
     }
 
     private DraggableCell dragSource;
-    private Image cross = new Image(Tree.class.getResourceAsStream("cross24.png"));
+    private Image cross = new Image(Tree.class.getResourceAsStream("xb24.png"));
     private final String selectedStyle = "list-cell-selected";
 
     private class DraggableCell extends TreeCell<Resource> {
