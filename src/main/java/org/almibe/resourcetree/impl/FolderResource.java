@@ -1,13 +1,14 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.impl;
 
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class FileResource implements Resource {
+public class FolderResource implements ParentResource {
+
     private String name;
     
-    public FileResource(String name) {
+    public FolderResource(String name) {
         this.name = name;
     }
     
@@ -18,7 +19,7 @@ public class FileResource implements Resource {
 
     @Override
     public Node getIcon() {
-        return  new ImageView(new Image(Tree.class.getResourceAsStream("Page_white.png")));
+        return  new ImageView(new Image(Tree.class.getResourceAsStream("Icons-mini-folder.gif")));
     }
     
 }

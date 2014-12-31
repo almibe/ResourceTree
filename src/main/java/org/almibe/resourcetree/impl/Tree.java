@@ -1,4 +1,4 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.impl;
 
 import java.util.HashMap;
 import java.util.Map;

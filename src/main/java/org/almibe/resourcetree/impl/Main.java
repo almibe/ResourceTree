@@ -1,10 +1,10 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.impl;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
+import org.almibe.resourcetree.ResourceTree;
 
 public class Main extends Application {
 

@@ -1,4 +1,4 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.impl;
 
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
@@ -9,6 +9,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import org.almibe.resourcetree.*;
 
 import java.util.Comparator;
 import java.util.HashMap;
