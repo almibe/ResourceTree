@@ -9,7 +9,7 @@ import org.almibe.resourcetree.ResourceTree;
 public class Main extends Application {
 
     Tree tree = new Tree();
-    ResourceTree<Resource> resourceTree = new TreeViewResourceTree<>();
+    ResourceTree<Resource> resourceTree = new TreeViewResourceTree<>(new FolderResource(""), false);
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -24,6 +24,8 @@ public class Main extends Application {
         tree.addResource(new FolderResource("Agile Docs"));
         tree.addResource(new FileResource("Agile Manifesto"));
 
+        resourceTree.setNestingRule(new ResourceNestingRule());
+        resourceTree.setComparator(new ResourceComparator());
         resourceTree.add(folder);
         resourceTree.add(new FolderResource("Docs"));
         resourceTree.add(new FileResource("May Report"));

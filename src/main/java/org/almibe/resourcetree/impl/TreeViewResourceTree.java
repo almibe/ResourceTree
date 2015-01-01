@@ -16,13 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TreeViewResourceTree<T> implements ResourceTree<T> {
-    private final TreeItem<Resource> root = new TreeItem<>(new FolderResource(""));
-    private final TreeView<Resource> tree = new TreeView<>(root);
-    private final Map<Resource, TreeItem<Resource>> resourceToTreeItemMap = new HashMap<>();
+    private final TreeItem<T> root;
+    private final TreeView<T> tree;
+    private final Map<T, TreeItem<T>> resourceToTreeItemMap = new HashMap<>();
+    private ResourceTreeItemDisplay treeItemDisplay;
 
-    public TreeViewResourceTree() {
-        tree.showRootProperty().set(false);
-        tree.setCellFactory((TreeView<Resource> tree) -> new DraggableCell(tree));
+    public TreeViewResourceTree(T root, boolean showRoot) {
+        this.root =  new TreeItem<>(root);
+        this.tree = new TreeView<>(this.root);
+        tree.showRootProperty().set(showRoot);
+        tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
     }
@@ -41,8 +44,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * 
      * @param resource The resource to be added to the tree
      */
-    public void addResource(Resource resource) {
-        TreeItem<Resource> treeItem = new TreeItem<>(resource);
+    public void addResource(T resource) {
+        TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(root, treeItem);
     }
@@ -53,21 +56,21 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param resource The resource to be added to the tree
      * @param parent The parent of the specified resource
      */
-    public void addResource(Resource resource, ParentResource parent) {
-        TreeItem<Resource> treeItem = new TreeItem<>(resource);
+    public void addResource(T resource, T parent) {
+        TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
-        TreeItem<Resource> parentTreeItem = resourceToTreeItemMap.get(parent);
+        TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    private void addOrdered(TreeItem<Resource> target, TreeItem<Resource> child) {
+    private void addOrdered(TreeItem<T> target, TreeItem<T> child) {
         if (target.getChildren().size() == 0) {
             target.getChildren().add(child);
             return;
         }
         for (int index = 0; index < target.getChildren().size(); index++) {
-            TreeItem<Resource> current = target.getChildren().get(index);
+            TreeItem<T> current = target.getChildren().get(index);
             if (current.getValue() instanceof ParentResource && !(child.getValue() instanceof ParentResource)) {
                 continue;
             }
@@ -75,7 +78,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 target.getChildren().add(index, child);
                 return;
             }
-            if (current.getValue().getName().compareTo(child.getValue().getName()) > 0) {
+            if (current.getValue().toString().compareTo(child.getValue().toString()) > 0) {
                 target.getChildren().add(index, child);
                 return;
             }
@@ -83,7 +86,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         target.getChildren().add(child);
     }
 
-    private void addOrderedDrop(TreeItem<Resource> target, TreeItem<Resource> child) {
+    private void addOrderedDrop(TreeItem<T> target, TreeItem<T> child) {
         addOrdered(target,child);
         tree.getSelectionModel().select(child);
     }
@@ -104,6 +107,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public void setComparator(Comparator<T> comparator) {
+
+    }
+
+    @Override
+    public void setItemDisplay(ResourceTreeItemDisplay display) {
 
     }
 
@@ -132,10 +140,10 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         return null;
     }
 
-    private class DraggableCell extends TreeCell<Resource> {
-        private Resource item;
+    private class DraggableCell extends TreeCell<T> {
+        private T item;
         
-        public DraggableCell(final TreeView<Resource> parentTree) {
+        public DraggableCell(final TreeView<T> parentTree) {
             setOnDragDetected((MouseEvent event) -> {
                 if (item == null) {
                     return;
@@ -145,8 +153,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 event.consume();
             });
             setOnMouseDragEntered((MouseDragEvent mouseDragEvent) -> {
-                TreeItem<Resource> source = dragSource.getTreeItem();
-                TreeItem<Resource> target = this.getTreeItem();
+                TreeItem<T> source = dragSource.getTreeItem();
+                TreeItem<T> target = this.getTreeItem();
                 if(target == null) { target = root; }
                 if(isValidDrop(source, target)) {
                     tree.setCursor(Cursor.MOVE);
@@ -162,8 +170,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 event.consume();
             });
             setOnMouseDragReleased((MouseDragEvent mouseDragEvent) -> {
-                TreeItem<Resource> source = dragSource.getTreeItem();
-                TreeItem<Resource> target = this.getTreeItem();
+                TreeItem<T> source = dragSource.getTreeItem();
+                TreeItem<T> target = this.getTreeItem();
                 tree.setCursor(Cursor.DEFAULT);
                 this.getStyleClass().remove(selectedStyle);
                 if(target == null) {
@@ -179,16 +187,16 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             });
         }
 
-        private boolean isValidDrop(TreeItem<Resource> source, TreeItem<Resource> target) {
+        private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
             return !(source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source));
         }
 
-        private boolean isChild(TreeItem<Resource> source, TreeItem<Resource> target) {
+        private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
             boolean result = false;
             if (source.getChildren().contains(target)) {
                 result = true;
             } else {
-                for (TreeItem<Resource> child : source.getChildren()) {
+                for (TreeItem<T> child : source.getChildren()) {
                     result = isChild(child, target);
                     if (result == true) {
                         break;
@@ -199,12 +207,12 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         }
         
         @Override
-        protected void updateItem(Resource item, boolean empty) {
+        protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);
             this.item = item;
-            if (item != null) {
-                setText(item.getName());
-                setGraphic(item.getIcon());
+            if (item != null && treeItemDisplay != null) {
+                textProperty().bindBidirectional(treeItemDisplay.getName(item));
+                graphicProperty().bindBidirectional(treeItemDisplay.getIcon(item));
             } else {
                 setText(null);
                 setGraphic(null);
