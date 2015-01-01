@@ -24,15 +24,16 @@ public class Main extends Application {
         tree.addResource(new FolderResource("Agile Docs"));
         tree.addResource(new FileResource("Agile Manifesto"));
 
-        resourceTree.setNestingRule(new ResourceNestingRule());
-        resourceTree.setComparator(new ResourceComparator());
-        resourceTree.add(folder);
-        resourceTree.add(new FolderResource("Docs"));
-        resourceTree.add(new FileResource("May Report"));
-        resourceTree.add(new FileResource("Validation Script"));
-        resourceTree.add(new FileResource("Webservice Checker"), folder);
-        resourceTree.add(new FolderResource("Agile Docs"));
-        resourceTree.add(new FileResource("Agile Manifesto"));
+        resourceTree.setItemNestingRule(new ResourceNestingRule());
+        resourceTree.setItemComparator(new ResourceComparator());
+        resourceTree.setItemDisplay(new ResourceItemDisplay());
+//        resourceTree.add(folder);
+//        resourceTree.add(new FolderResource("Docs"));
+//        resourceTree.add(new FileResource("May Report"));
+//        resourceTree.add(new FileResource("Validation Script"));
+//        resourceTree.add(new FileResource("Webservice Checker"), folder);
+//        resourceTree.add(new FolderResource("Agile Docs"));
+//        resourceTree.add(new FileResource("Agile Manifesto"));
 
         sp.getItems().addAll(tree.getTree(), resourceTree.getWidget());
         primaryStage.setScene(new Scene(sp));

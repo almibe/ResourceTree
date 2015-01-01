@@ -19,7 +19,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private final TreeItem<T> root;
     private final TreeView<T> tree;
     private final Map<T, TreeItem<T>> resourceToTreeItemMap = new HashMap<>();
-    private ResourceTreeItemDisplay treeItemDisplay;
+    private ResourceTreeItemDisplay<T> itemDisplay;
+    private Comparator<T> itemComparator;
+    private NestingRule<T> itemNestingRule;
 
     public TreeViewResourceTree(T root, boolean showRoot) {
         this.root =  new TreeItem<>(root);
@@ -101,38 +103,38 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public void setNestingRule(NestingRule<T> nestingRule) {
-
+    public void setItemNestingRule(NestingRule<T> nestingRule) {
+        this.itemNestingRule = nestingRule;
     }
 
     @Override
-    public void setComparator(Comparator<T> comparator) {
-
+    public void setItemComparator(Comparator<T> comparator) {
+        this.itemComparator = comparator;
     }
 
     @Override
     public void setItemDisplay(ResourceTreeItemDisplay display) {
-
+        this.itemDisplay = display;
     }
 
     @Override
     public boolean move(T node, T parent) {
-        return false;
+        throw new UnsupportedOperationException("not impl'd");
     }
 
     @Override
     public boolean add(T node) {
-        return false;
+        return add(node, root.getValue());
     }
 
     @Override
     public boolean add(T node, T parent) {
-        return false;
+        throw new UnsupportedOperationException("not impl'd");
     }
 
     @Override
     public boolean remove(T node) {
-        return false;
+        throw new UnsupportedOperationException("not impl'd");
     }
 
     @Override
@@ -210,9 +212,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);
             this.item = item;
-            if (item != null && treeItemDisplay != null) {
-                textProperty().bindBidirectional(treeItemDisplay.getName(item));
-                graphicProperty().bindBidirectional(treeItemDisplay.getIcon(item));
+            if (item != null && itemDisplay != null) {
+                textProperty().bindBidirectional(itemDisplay.getName(item));
+                graphicProperty().bindBidirectional(itemDisplay.getIcon(item));
             } else {
                 setText(null);
                 setGraphic(null);

@@ -73,7 +73,7 @@ public class Tree {
                 target.getChildren().add(index, child);
                 return;
             }
-            if (current.getValue().getName().compareTo(child.getValue().getName()) > 0) {
+            if (current.getValue().getName().getValue().compareTo(child.getValue().getName().getValue()) > 0) {
                 target.getChildren().add(index, child);
                 return;
             }
@@ -161,8 +161,10 @@ public class Tree {
             super.updateItem(item, empty);
             this.item = item;
             if (item != null) {
-                setText(item.getName());
-                setGraphic(item.getIcon());
+                //textProperty().bindBidirectional(item.getName());
+                //graphicProperty().bindBidirectional(item.getIcon());
+                setText(item.getName().getValue());
+                setGraphic(item.getIcon().getValue());
             } else {
                 setText(null);
                 setGraphic(null);
