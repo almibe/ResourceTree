@@ -46,10 +46,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * 
      * @param resource The resource to be added to the tree
      */
-    public void addResource(T resource) {
+    @Override
+    public boolean add(T resource) {
+        //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(root, treeItem);
+        return true; //TODO return real value
     }
     
     /**
@@ -58,11 +61,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param resource The resource to be added to the tree
      * @param parent The parent of the specified resource
      */
-    public void addResource(T resource, T parent) {
+    @Override
+    public boolean add(T resource, T parent) {
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
+        return true; //TODO return real value
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
@@ -119,16 +124,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public boolean move(T node, T parent) {
-        throw new UnsupportedOperationException("not impl'd");
-    }
-
-    @Override
-    public boolean add(T node) {
-        return add(node, root.getValue());
-    }
-
-    @Override
-    public boolean add(T node, T parent) {
         throw new UnsupportedOperationException("not impl'd");
     }
 
@@ -213,8 +208,10 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             super.updateItem(item, empty);
             this.item = item;
             if (item != null && itemDisplay != null) {
-                textProperty().bindBidirectional(itemDisplay.getName(item));
-                graphicProperty().bindBidirectional(itemDisplay.getIcon(item));
+                //textProperty().bindBidirectional(itemDisplay.getName(item));
+                //graphicProperty().bindBidirectional(itemDisplay.getIcon(item));
+                setText(itemDisplay.getName(item).getValue());
+                setGraphic(itemDisplay.getIcon(item).getValue());
             } else {
                 setText(null);
                 setGraphic(null);
