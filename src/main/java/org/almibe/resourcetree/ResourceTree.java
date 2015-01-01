@@ -8,6 +8,7 @@ public interface ResourceTree<T> {
     Parent getWidget();
     void setNestingRule(NestingRule<T> nestingRule);
     void setComparator(Comparator<T> comparator);
+    void setItemDisplay(ResourceTreeItemDisplay display);
     boolean move(T node, T parent);
     boolean add(T node);
     boolean add(T node, T parent);
