@@ -115,6 +115,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public synchronized boolean move(T node, T parent) {
+        //check if node can be added to parent
+        //get treeItem from map
+        //remove treeItem from parent
+        //add treeItem to new parent
+        //done?
         throw new UnsupportedOperationException("not impl'd");
     }
 
@@ -124,11 +129,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         TreeItem<T> parent = treeItem.getParent();
         parent.getChildren().remove(treeItem);
         return true; //TODO return real value and add checks
-    }
-
-    @Override
-    public ResourceTreeNode<T> getReadonlyRoot() {
-        throw new UnsupportedOperationException("not impl'd");
     }
 
     private class DraggableCell extends TreeCell<T> {

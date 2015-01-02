@@ -14,5 +14,4 @@ public interface ResourceTree<T> {
     boolean add(T node, T parent);
     boolean remove(T node);
     void clearSelection();
-    ResourceTreeNode<T> getReadonlyRoot();
 }
