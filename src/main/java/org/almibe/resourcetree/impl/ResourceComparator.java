@@ -11,6 +11,6 @@ public class ResourceComparator implements Comparator<Resource> {
         if (!(left instanceof ParentResource) && right instanceof ParentResource) {
             return 1;
         }
-        return left.getName().getValue().compareTo(right.getName().getValue());
+        return left.getName().compareTo(right.getName());
     }
 }

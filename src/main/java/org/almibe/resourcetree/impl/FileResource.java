@@ -9,21 +9,21 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class FileResource implements Resource {
-    private SimpleStringProperty name;
-    private SimpleObjectProperty<Node> icon;
+    private String name;
+    private ImageView icon;
     
     public FileResource(String name) {
-        this.name = new SimpleStringProperty(name);
-        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(FileResource.class.getResourceAsStream("Page_white.png"))));
+        this.name = name;
+        this.icon = new ImageView(new Image(FileResource.class.getResourceAsStream("Page_white.png")));
     }
     
     @Override
-    public StringProperty getName() {
+    public String getName() {
         return name;
     }
 
     @Override
-    public ObjectProperty<Node> getIcon() {
-        return  icon;
+    public ImageView getIcon() {
+        return icon;
     }
 }

@@ -233,8 +233,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             if (item != null && itemDisplay != null) {
                 //textProperty().bindBidirectional(itemDisplay.getName(item));
                 //graphicProperty().bindBidirectional(itemDisplay.getIcon(item));
-                setText(itemDisplay.getName(item).getValue());
-                setGraphic(itemDisplay.getIcon(item).getValue());
+                setText(itemDisplay.getName(item));
+                setGraphic(itemDisplay.getIcon(item));
             } else {
                 setText(null);
                 setGraphic(null);

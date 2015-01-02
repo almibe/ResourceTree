@@ -1,29 +1,24 @@
 package org.almibe.resourcetree.impl;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class FolderResource implements ParentResource {
-    private SimpleStringProperty name;
-    private SimpleObjectProperty<Node> icon;
+    private String name;
+    private ImageView icon;
 
     public FolderResource(String name) {
-        this.name = new SimpleStringProperty(name);
-        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(FolderResource.class.getResourceAsStream("Icons-mini-folder.gif"))));
+        this.name = name;
+        this.icon = new ImageView(new Image(FolderResource.class.getResourceAsStream("Icons-mini-folder.gif")));
     }
 
     @Override
-    public StringProperty getName() {
+    public String getName() {
         return name;
     }
 
     @Override
-    public ObjectProperty<Node> getIcon() {
+    public ImageView getIcon() {
         return  icon;
     }
 }

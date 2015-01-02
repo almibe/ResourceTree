@@ -1,18 +1,16 @@
 package org.almibe.resourcetree.impl;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
-import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 import org.almibe.resourcetree.ResourceTreeItemDisplay;
 
 public class ResourceItemDisplay implements ResourceTreeItemDisplay<Resource> {
     @Override
-    public StringProperty getName(Resource resource) {
+    public String getName(Resource resource) {
         return resource.getName();
     }
 
     @Override
-    public ObjectProperty<Node> getIcon(Resource resource) {
+    public ImageView getIcon(Resource resource) {
         return resource.getIcon();
     }
 }
