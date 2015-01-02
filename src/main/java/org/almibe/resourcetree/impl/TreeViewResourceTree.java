@@ -24,6 +24,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
+    private ResourceTreePersistence treePersistence;
 
     //variables used for DnD
     private DraggableCell dragSource;
@@ -71,6 +72,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(root, treeItem);
+        this.treePersistence.add(resource);
         return true; //TODO return real value
     }
     
@@ -86,6 +88,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
+        this.treePersistence.add(resource, parent);
         return true; //TODO return real value
     }
 
@@ -132,7 +135,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public void setTreePersistence(ResourceTreePersistence treePersistence) {
-
+        this.treePersistence = treePersistence;
     }
 
     @Override
@@ -143,6 +146,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             TreeItem<T> currentParentTreeItem = nodeTreeItem.getParent();
             currentParentTreeItem.getChildren().remove(nodeTreeItem);
             addOrdered(newParentTreeItem, nodeTreeItem);
+            this.treePersistence.move(node, parent);
         }
         return true; //TODO return real value and add checks
     }
@@ -152,6 +156,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         TreeItem<T> treeItem = resourceToTreeItemMap.remove(node);
         TreeItem<T> parent = treeItem.getParent();
         parent.getChildren().remove(treeItem);
+        this.treePersistence.remove(node);
         return true; //TODO return real value and add checks
     }
 
