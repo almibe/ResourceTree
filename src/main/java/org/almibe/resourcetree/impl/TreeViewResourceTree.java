@@ -131,6 +131,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
+    public void setTreePersistence(ResourceTreePersistence treePersistence) {
+
+    }
+
+    @Override
     public synchronized boolean move(T node, T parent) {
         TreeItem<T> nodeTreeItem = resourceToTreeItemMap.get(node);
         TreeItem<T> newParentTreeItem = resourceToTreeItemMap.get(parent);

@@ -11,6 +11,7 @@ public interface ResourceTree<T> {
     void setItemNestingRule(NestingRule<T> nestingRule);
     void setItemComparator(Comparator<T> comparator);
     void setItemDisplay(ResourceTreeItemDisplay display);
+    void setTreePersistence(ResourceTreePersistence treePersistence);
     boolean move(T node, T parent);
     boolean add(T node);
     boolean add(T node, T parent);
