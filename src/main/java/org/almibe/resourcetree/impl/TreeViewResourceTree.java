@@ -1,5 +1,6 @@
 package org.almibe.resourcetree.impl;
 
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
@@ -55,7 +56,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public T getRoot() {
+    public ReadOnlyListProperty<T> getResources() {
         throw new UnsupportedOperationException("not impl'd");
     }
 

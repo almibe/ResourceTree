@@ -1,5 +1,6 @@
 package org.almibe.resourcetree;
 
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.scene.Parent;
 
 import java.util.Comparator;
@@ -17,5 +18,5 @@ public interface ResourceTree<T> {
     void clearSelection();
     T getParent(T t);
     List<T> getChildren(T t);
-    T getRoot();
+    ReadOnlyListProperty<T> getResources();
 }
