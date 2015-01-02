@@ -14,7 +14,7 @@ public class FileResource implements Resource {
     
     public FileResource(String name) {
         this.name = new SimpleStringProperty(name);
-        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(Tree.class.getResourceAsStream("Page_white.png"))));
+        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(FileResource.class.getResourceAsStream("Page_white.png"))));
     }
     
     @Override

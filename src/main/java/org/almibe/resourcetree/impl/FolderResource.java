@@ -14,7 +14,7 @@ public class FolderResource implements ParentResource {
 
     public FolderResource(String name) {
         this.name = new SimpleStringProperty(name);
-        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(Tree.class.getResourceAsStream("Icons-mini-folder.gif"))));
+        this.icon = new SimpleObjectProperty<>(new ImageView(new Image(FolderResource.class.getResourceAsStream("Icons-mini-folder.gif"))));
     }
 
     @Override
