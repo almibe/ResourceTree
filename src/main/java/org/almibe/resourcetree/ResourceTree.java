@@ -3,6 +3,7 @@ package org.almibe.resourcetree;
 import javafx.scene.Parent;
 
 import java.util.Comparator;
+import java.util.List;
 
 public interface ResourceTree<T> {
     Parent getWidget();
@@ -14,4 +15,7 @@ public interface ResourceTree<T> {
     boolean add(T node, T parent);
     boolean remove(T node);
     void clearSelection();
+    T getParent(T t);
+    List<T> getChildren(T t);
+    T getRoot();
 }

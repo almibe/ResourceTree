@@ -13,6 +13,7 @@ import org.almibe.resourcetree.*;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TreeViewResourceTree<T> implements ResourceTree<T> {
@@ -42,7 +43,22 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         this.tree.getFocusModel().focus(-1);
         this.tree.getSelectionModel().select(-1);
     }
-    
+
+    @Override
+    public T getParent(T t) {
+        throw new UnsupportedOperationException("not impl'd");
+    }
+
+    @Override
+    public List<T> getChildren(T t) {
+        throw new UnsupportedOperationException("not impl'd");
+    }
+
+    @Override
+    public T getRoot() {
+        throw new UnsupportedOperationException("not impl'd");
+    }
+
     /**
      * Add a resource to the tree, directly under its root.
      * 
