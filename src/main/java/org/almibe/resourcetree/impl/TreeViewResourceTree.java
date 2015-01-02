@@ -22,6 +22,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
+
+    //variables used for DnD
     private DraggableCell dragSource;
     private Image cross = new Image(TreeViewResourceTree.class.getResourceAsStream("xb24.png"));
     private final String selectedStyle = "list-cell-selected";
@@ -36,7 +38,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public void clearSelection() {
+    public synchronized void clearSelection() {
         this.tree.getFocusModel().focus(-1);
         this.tree.getSelectionModel().select(-1);
     }
@@ -47,7 +49,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param resource The resource to be added to the tree
      */
     @Override
-    public boolean add(T resource) {
+    public synchronized boolean add(T resource) {
         //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
@@ -62,7 +64,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param parent The parent of the specified resource
      */
     @Override
-    public boolean add(T resource, T parent) {
+    public synchronized boolean add(T resource, T parent) {
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
@@ -112,13 +114,16 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public boolean move(T node, T parent) {
+    public synchronized boolean move(T node, T parent) {
         throw new UnsupportedOperationException("not impl'd");
     }
 
     @Override
-    public boolean remove(T node) {
-        throw new UnsupportedOperationException("not impl'd");
+    public synchronized boolean remove(T node) {
+        TreeItem<T> treeItem = resourceToTreeItemMap.remove(node);
+        TreeItem<T> parent = treeItem.getParent();
+        parent.getChildren().remove(treeItem);
+        return true; //TODO return real value and add checks
     }
 
     @Override

@@ -25,6 +25,11 @@ public class Main extends Application {
         resourceTree.add(new FileResource("Webservice Checker"), folder);
         resourceTree.add(new FolderResource("Agile Docs"));
         resourceTree.add(new FileResource("Agile Manifesto"));
+        FileResource temp = new FileResource("Temp Script");
+        resourceTree.add(temp);
+        resourceTree.remove(temp);
+        //resourceTree.add(temp);
+        //resourceTree.move(temp, folder);
 
         primaryStage.setScene(new Scene(resourceTree.getWidget()));
         primaryStage.show();
