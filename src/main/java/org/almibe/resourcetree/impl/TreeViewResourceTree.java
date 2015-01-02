@@ -68,7 +68,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
-    //TODO update to use new Comparator
     private void addOrdered(TreeItem<T> target, TreeItem<T> child) {
         if (target.getChildren().size() == 0) {
             target.getChildren().add(child);
@@ -76,14 +75,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         }
         for (int index = 0; index < target.getChildren().size(); index++) {
             TreeItem<T> current = target.getChildren().get(index);
-//            if (current.getValue() instanceof ParentResource && !(child.getValue() instanceof ParentResource)) {
-//                continue;
-//            }
-//            if (!(current.getValue() instanceof ParentResource) && child.getValue() instanceof ParentResource) {
-//                target.getChildren().add(index, child);
-//                return;
-//            }
-//            if (current.getValue().toString().compareTo(child.getValue().toString()) > 0) {
             if (this.itemComparator.compare(current.getValue(), child.getValue()) > 0) {
                 target.getChildren().add(index, child);
                 return;
