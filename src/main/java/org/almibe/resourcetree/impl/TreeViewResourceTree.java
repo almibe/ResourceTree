@@ -22,6 +22,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
+    private DraggableCell dragSource;
+    private Image cross = new Image(TreeViewResourceTree.class.getResourceAsStream("xb24.png"));
+    private final String selectedStyle = "list-cell-selected";
 
     public TreeViewResourceTree(T root, boolean showRoot) {
         this.root =  new TreeItem<>(root);
@@ -88,10 +91,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         tree.getSelectionModel().select(child);
     }
 
-    private DraggableCell dragSource;
-    private Image cross = new Image(TreeViewResourceTree.class.getResourceAsStream("xb24.png"));
-    private final String selectedStyle = "list-cell-selected";
-
     @Override
     public Parent getWidget() {
         return this.tree;
@@ -124,7 +123,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public ResourceTreeNode<T> getReadonlyRoot() {
-        return null;
+        throw new UnsupportedOperationException("not impl'd");
     }
 
     private class DraggableCell extends TreeCell<T> {
@@ -175,7 +174,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         }
 
         private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
-            return !(source == null || target == null || source == target || !(target.getValue() instanceof ParentResource) || isChild(source, target) || target.getChildren().contains(source));
+            return itemNestingRule.canNest(source.getValue(), target.getValue()) && !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
         }
 
         private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
