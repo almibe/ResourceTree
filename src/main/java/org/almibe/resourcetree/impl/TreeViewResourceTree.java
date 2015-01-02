@@ -132,12 +132,14 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public synchronized boolean move(T node, T parent) {
-        //check if node can be added to parent
-        //get treeItem from map
-        //remove treeItem from parent
-        //add treeItem to new parent
-        //done?
-        throw new UnsupportedOperationException("not impl'd");
+        TreeItem<T> nodeTreeItem = resourceToTreeItemMap.get(node);
+        TreeItem<T> newParentTreeItem = resourceToTreeItemMap.get(parent);
+        if (isValidDrop(nodeTreeItem, newParentTreeItem)) {
+            TreeItem<T> currentParentTreeItem = nodeTreeItem.getParent();
+            currentParentTreeItem.getChildren().remove(nodeTreeItem);
+            addOrdered(newParentTreeItem, nodeTreeItem);
+        }
+        return true; //TODO return real value and add checks
     }
 
     @Override
@@ -146,6 +148,25 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         TreeItem<T> parent = treeItem.getParent();
         parent.getChildren().remove(treeItem);
         return true; //TODO return real value and add checks
+    }
+
+    private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
+        return itemNestingRule.canNest(source.getValue(), target.getValue()) && !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
+    }
+
+    private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
+        boolean result = false;
+        if (source.getChildren().contains(target)) {
+            result = true;
+        } else {
+            for (TreeItem<T> child : source.getChildren()) {
+                result = isChild(child, target);
+                if (result == true) {
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     private class DraggableCell extends TreeCell<T> {
@@ -195,25 +216,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             });
         }
 
-        private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
-            return itemNestingRule.canNest(source.getValue(), target.getValue()) && !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
-        }
-
-        private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
-            boolean result = false;
-            if (source.getChildren().contains(target)) {
-                result = true;
-            } else {
-                for (TreeItem<T> child : source.getChildren()) {
-                    result = isChild(child, target);
-                    if (result == true) {
-                        break;
-                    }
-                }
-            }
-            return result;
-        }
-        
         @Override
         protected void updateItem(T item, boolean empty) {
             super.updateItem(item, empty);

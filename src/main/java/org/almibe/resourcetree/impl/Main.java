@@ -28,8 +28,8 @@ public class Main extends Application {
         FileResource temp = new FileResource("Temp Script");
         resourceTree.add(temp);
         resourceTree.remove(temp);
-        //resourceTree.add(temp);
-        //resourceTree.move(temp, folder);
+        resourceTree.add(temp);
+        resourceTree.move(temp, folder);
 
         primaryStage.setScene(new Scene(resourceTree.getWidget()));
         primaryStage.show();

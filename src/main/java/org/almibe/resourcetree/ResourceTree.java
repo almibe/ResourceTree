@@ -16,7 +16,7 @@ public interface ResourceTree<T> {
     boolean add(T node, T parent);
     boolean remove(T node);
     void clearSelection();
-    T getParent(T t);
-    List<T> getChildren(T t);
+    T getParent(T t); //TODO make observable
+    List<T> getChildren(T t); //TODO make observable
     ReadOnlyListProperty<T> getResources();
 }
