@@ -160,6 +160,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         return true; //TODO return real value and add checks
     }
 
+    @Override
+    public boolean update(T node) {
+        throw new UnsupportedOperationException("not impl'd");
+    }
+
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
         return itemNestingRule.canNest(source.getValue(), target.getValue()) && !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
     }
