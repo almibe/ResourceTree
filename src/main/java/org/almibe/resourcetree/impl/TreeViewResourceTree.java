@@ -208,7 +208,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
                     TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
-                    treeEventHandler.onOpen(node.getValue());
+                    if(node != null && node.getValue() == this.item) {
+                        treeEventHandler.onOpen(node.getValue());
+                    }
                 }
             });
             setOnDragDetected((MouseEvent event) -> {
