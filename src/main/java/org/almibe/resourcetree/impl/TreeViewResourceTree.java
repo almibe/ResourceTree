@@ -13,7 +13,11 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import org.almibe.resourcetree.*;
+import org.almibe.resourcetree.NestingRule;
+import org.almibe.resourcetree.ResourceTree;
+import org.almibe.resourcetree.ResourceTreeEventHandler;
+import org.almibe.resourcetree.ResourceTreeItemDisplay;
+import org.almibe.resourcetree.ResourceTreePersistence;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,7 +32,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
-    private ResourceTreePersistence treePersistence;
+    private ResourceTreePersistence<T> treePersistence;
     private ResourceTreeEventHandler<T> treeEventHandler;
 
     //variables used for DnD
@@ -43,6 +47,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
+        tree.setOnKeyPressed(event -> {
+            System.out.println("in tree keypressed " + event.getCharacter());
+        });
     }
 
     @Override
@@ -183,7 +190,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
-        return itemNestingRule.canNest(source.getValue(), target.getValue()) && !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
+        return itemNestingRule.canNest(source.getValue(), target.getValue()) &&
+            !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
     }
 
     private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
@@ -208,7 +216,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
                     TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
-                    if(node != null && node.getValue() == this.item) {
+                    if (node != null && node.getValue() == this.item) {
                         treeEventHandler.onOpen(node.getValue());
                     }
                 }
@@ -261,8 +269,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             super.updateItem(item, empty);
             this.item = item;
             if (item != null && itemDisplay != null) {
-                //textProperty().bindBidirectional(itemDisplay.getName(item));
-                //graphicProperty().bindBidirectional(itemDisplay.getIcon(item));
                 setText(itemDisplay.getName(item));
                 setGraphic(itemDisplay.getIcon(item));
             } else {
