@@ -43,6 +43,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
+        this.tree.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
+                this.treeEventHandler.onOpen(node.getValue());
+            }
+        });
+
     }
 
     @Override
