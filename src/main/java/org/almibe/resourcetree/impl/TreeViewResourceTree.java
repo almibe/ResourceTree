@@ -49,7 +49,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 this.treeEventHandler.onOpen(node.getValue());
             }
         });
-
     }
 
     @Override
