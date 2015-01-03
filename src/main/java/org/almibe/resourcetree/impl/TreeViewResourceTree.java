@@ -1,6 +1,9 @@
 package org.almibe.resourcetree.impl;
 
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
@@ -12,6 +15,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import org.almibe.resourcetree.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
     private ResourceTreePersistence treePersistence;
+    private ResourceTreeEventHandler<T> treeEventHandler;
 
     //variables used for DnD
     private DraggableCell dragSource;
@@ -48,17 +53,23 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public T getParent(T t) {
-        throw new UnsupportedOperationException("not impl'd");
+        TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
+        return treeItem.getParent().getValue(); //TODO add checking
     }
 
     @Override
     public List<T> getChildren(T t) {
-        throw new UnsupportedOperationException("not impl'd");
+        List<T> children = new ArrayList<>();
+        TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
+        treeItem.getChildren().forEach(item -> children.add(item.getValue()));
+        return children;
     }
 
     @Override
     public ReadOnlyListProperty<T> getResources() {
-        throw new UnsupportedOperationException("not impl'd");
+        //TODO I think I'm going to need to add a new observable list to do this right but for now just return a static list wrapped in an observable
+        ObservableList<T> returnList = FXCollections.observableArrayList(this.resourceToTreeItemMap.keySet());
+        return new ReadOnlyListWrapper(returnList);
     }
 
     /**
@@ -67,13 +78,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param resource The resource to be added to the tree
      */
     @Override
-    public synchronized boolean add(T resource) {
+    public synchronized void add(T resource) {
+        //TODO add checks
         //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(root, treeItem);
         this.treePersistence.add(resource);
-        return true; //TODO return real value
     }
     
     /**
@@ -83,13 +94,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
      * @param parent The parent of the specified resource
      */
     @Override
-    public synchronized boolean add(T resource, T parent) {
+    public synchronized void add(T resource, T parent) {
+        //TODO add checks
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
         this.treePersistence.add(resource, parent);
-        return true; //TODO return real value
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
@@ -139,7 +150,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public synchronized boolean move(T node, T parent) {
+    public void setTreeEventHandler(ResourceTreeEventHandler eventHandler) {
+        this.treeEventHandler = eventHandler;
+    }
+
+    @Override
+    public synchronized void move(T node, T parent) {
+        //TODO add checks
         TreeItem<T> nodeTreeItem = resourceToTreeItemMap.get(node);
         TreeItem<T> newParentTreeItem = resourceToTreeItemMap.get(parent);
         if (isValidDrop(nodeTreeItem, newParentTreeItem)) {
@@ -148,21 +165,21 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             addOrdered(newParentTreeItem, nodeTreeItem);
             this.treePersistence.move(node, parent);
         }
-        return true; //TODO return real value and add checks
     }
 
     @Override
-    public synchronized boolean remove(T node) {
+    public synchronized void remove(T node) {
+        //TODO add checks
         TreeItem<T> treeItem = resourceToTreeItemMap.remove(node);
         TreeItem<T> parent = treeItem.getParent();
         parent.getChildren().remove(treeItem);
         this.treePersistence.remove(node);
-        return true; //TODO return real value and add checks
     }
 
     @Override
-    public boolean update(T node) {
-        throw new UnsupportedOperationException("not impl'd");
+    public void update(T node) {
+        //TODO update display of the node in the tree and add checks
+        this.treePersistence.update(node);
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {

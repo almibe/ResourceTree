@@ -18,6 +18,8 @@ public class Main extends Application {
         resourceTree.setItemNestingRule(new ResourceNestingRule());
         resourceTree.setItemComparator(new ResourceComparator());
         resourceTree.setItemDisplay(new ResourceItemDisplay());
+        resourceTree.setTreePersistence(new ResourcePersistence());
+        resourceTree.setTreeEventHandler(new ResourceEventHandler());
         resourceTree.add(folder);
         resourceTree.add(new FolderResource("Docs"));
         resourceTree.add(new FileResource("May Report"));
