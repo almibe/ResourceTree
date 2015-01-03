@@ -1,6 +1,7 @@
 package org.almibe.resourcetree;
 
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 
 import java.util.Comparator;
@@ -12,11 +13,12 @@ public interface ResourceTree<T> {
     void setItemComparator(Comparator<T> comparator);
     void setItemDisplay(ResourceTreeItemDisplay display);
     void setTreePersistence(ResourceTreePersistence treePersistence);
-    boolean move(T node, T parent);
-    boolean add(T node);
-    boolean add(T node, T parent);
-    boolean remove(T node);
-    boolean update(T node);
+    void setTreeEventHandler(ResourceTreeEventHandler eventHandler);
+    void move(T node, T parent);
+    void add(T node);
+    void add(T node, T parent);
+    void remove(T node);
+    void update(T node);
     void clearSelection();
     T getParent(T t); //TODO make observable
     List<T> getChildren(T t); //TODO make observable

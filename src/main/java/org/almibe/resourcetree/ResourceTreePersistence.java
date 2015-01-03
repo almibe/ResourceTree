@@ -1,9 +1,9 @@
 package org.almibe.resourcetree;
 
 public interface ResourceTreePersistence<T> {
-    boolean move(T node, T parent);
-    boolean add(T node);
-    boolean add(T node, T parent);
-    boolean remove(T node);
-    boolean update(T node);
+    void move(T node, T parent);
+    void add(T node);
+    void add(T node, T parent);
+    void remove(T node);
+    void update(T node);
 }
