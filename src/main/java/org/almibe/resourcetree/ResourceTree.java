@@ -11,9 +11,9 @@ public interface ResourceTree<T> {
     Parent getWidget();
     void setItemNestingRule(NestingRule<T> nestingRule);
     void setItemComparator(Comparator<T> comparator);
-    void setItemDisplay(ResourceTreeItemDisplay display);
-    void setTreePersistence(ResourceTreePersistence treePersistence);
-    void setTreeEventHandler(ResourceTreeEventHandler eventHandler);
+    void setItemDisplay(ResourceTreeItemDisplay<T> display);
+    void setTreePersistence(ResourceTreePersistence<T> treePersistence);
+    void setTreeEventHandler(ResourceTreeEventHandler<T> eventHandler);
     void move(T node, T parent);
     void add(T node);
     void add(T node, T parent);
