@@ -11,6 +11,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import org.almibe.resourcetree.NestingRule;
@@ -48,7 +49,12 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
         tree.setOnKeyPressed(event -> {
-            System.out.println("in tree keypressed " + event.getCharacter());
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
+                if(node != null) {
+                    treeEventHandler.onOpen(node.getValue());
+                }
+            }
         });
     }
 
