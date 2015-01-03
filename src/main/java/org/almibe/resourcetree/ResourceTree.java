@@ -11,7 +11,7 @@ public interface ResourceTree<T> extends ResourceTreeMutation<T> {
     void setItemNestingRule(NestingRule<T> nestingRule);
     void setItemComparator(Comparator<T> comparator);
     void setItemDisplay(ResourceTreeItemDisplay<T> display);
-    void setTreePersistence(ResourceTreeMutation<T> treePersistence);
+    void setTreePersistence(ResourceTreePersistence<T> treePersistence);
     void setTreeEventHandler(ResourceTreeEventHandler<T> eventHandler);
     void clearSelection();
     T getParent(T t); //TODO make observable
