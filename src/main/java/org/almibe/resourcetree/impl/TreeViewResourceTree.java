@@ -37,7 +37,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private NestingRule<T> itemNestingRule;
     private ResourceTreePersistence<T> treePersistence;
     private ResourceTreeEventHandler<T> treeEventHandler;
-    private final ContextMenu contextMenu = new ContextMenu();
 
     //variables used for DnD
     private DraggableCell dragSource;
@@ -220,7 +219,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     private class DraggableCell extends TreeCell<T> {
         private T item;
-        
+
         public DraggableCell(final TreeView<T> parentTree) {
             setOnMouseClicked(event -> {
                 if (this.item == null) {
@@ -233,6 +232,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                     }
                 }
                 if (event.getButton().equals(MouseButton.SECONDARY)) {
+                    ContextMenu contextMenu = new ContextMenu();
                     List<TreeItem<T>> items = tree.getSelectionModel().getSelectedItems();
                     if (items == null || items.size() == 0) {
                         contextMenu.getItems().setAll(treeEventHandler.onContextMenu());
