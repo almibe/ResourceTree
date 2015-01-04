@@ -1,10 +1,13 @@
 package org.almibe.resourcetree;
 
+import javafx.scene.control.MenuItem;
+
 import java.util.Collection;
+import java.util.List;
 
 public interface ResourceTreeEventHandler<T> {
     void onOpen(T t);
-    void onContextMenu();
-    void onContextMenu(T t);
-    void onContextMenu(Collection<T> t);
+    List<MenuItem> onContextMenu();
+    List<MenuItem> onContextMenu(T t);
+    List<MenuItem> onContextMenu(Collection<T> t);
 }

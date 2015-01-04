@@ -7,11 +7,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import org.almibe.resourcetree.NestingRule;
@@ -35,6 +37,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private NestingRule<T> itemNestingRule;
     private ResourceTreePersistence<T> treePersistence;
     private ResourceTreeEventHandler<T> treeEventHandler;
+    private final ContextMenu contextMenu = new ContextMenu();
 
     //variables used for DnD
     private DraggableCell dragSource;
@@ -51,7 +54,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         tree.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ENTER)) {
                 TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
-                if(node != null) {
+                if (node != null) {
                     treeEventHandler.onOpen(node.getValue());
                 }
             }
@@ -220,11 +223,27 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         
         public DraggableCell(final TreeView<T> parentTree) {
             setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2) {
+                if (this.item == null) {
+                    tree.getSelectionModel().clearSelection();
+                }
+                if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
                     TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
                     if (node != null && node.getValue() == this.item) {
                         treeEventHandler.onOpen(node.getValue());
                     }
+                }
+                if (event.getButton().equals(MouseButton.SECONDARY)) {
+                    List<TreeItem<T>> items = tree.getSelectionModel().getSelectedItems();
+                    if (items == null || items.size() == 0) {
+                        contextMenu.getItems().setAll(treeEventHandler.onContextMenu());
+                    } else if (items.size() == 1) {
+                        contextMenu.getItems().setAll(treeEventHandler.onContextMenu(items.get(0).getValue()));
+                    } else {
+                        List<T> resources = new ArrayList<>();
+                        items.forEach(it -> resources.add(it.getValue()));
+                        contextMenu.getItems().setAll(treeEventHandler.onContextMenu(resources));
+                    }
+                    contextMenu.show(this, event.getScreenX(), event.getScreenY());
                 }
             });
             setOnDragDetected((MouseEvent event) -> {

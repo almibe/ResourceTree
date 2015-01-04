@@ -1,8 +1,12 @@
 package org.almibe.resourcetree.demo;
 
+import javafx.scene.control.MenuItem;
 import org.almibe.resourcetree.ResourceTreeEventHandler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ResourceEventHandler implements ResourceTreeEventHandler<Resource> {
     @Override
@@ -11,19 +15,19 @@ public class ResourceEventHandler implements ResourceTreeEventHandler<Resource> 
     }
 
     @Override
-    public void onContextMenu() {
-        System.out.println(" in onContextMenu");
+    public List<MenuItem> onContextMenu() {
+        return Arrays.asList(new MenuItem("treeview content menu"));
     }
 
     @Override
-    public void onContextMenu(Resource resource) {
-        System.out.println(" in onContextMenu " + resource.getName());
+    public List<MenuItem> onContextMenu(Resource resource) {
+        return Arrays.asList(new MenuItem(resource.getName() + " content menu"));
     }
 
     @Override
-    public void onContextMenu(Collection<Resource> t) {
-        StringBuilder sb = new StringBuilder();
-        t.forEach(it -> sb.append(" " + it.getName()));
-        System.out.println(" in onOpen " + sb);
+    public List<MenuItem> onContextMenu(Collection<Resource> t) {
+        List<MenuItem> items = new ArrayList<>();
+        t.forEach(it -> items.add(new MenuItem(it.getName())));
+        return items;
     }
 }
