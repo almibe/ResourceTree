@@ -2,7 +2,6 @@ package org.almibe.resourcetree;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.scene.Parent;
-import javafx.scene.control.TreeItem;
 
 import java.util.Comparator;
 import java.util.List;
