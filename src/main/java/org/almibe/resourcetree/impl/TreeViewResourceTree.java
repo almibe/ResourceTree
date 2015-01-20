@@ -67,6 +67,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
+    public T getRootItem() {
+        return this.root.getValue();
+    }
+
+    @Override
     public T getParent(T t) {
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
         return treeItem.getParent().getValue(); //TODO add checking

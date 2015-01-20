@@ -2,6 +2,7 @@ package org.almibe.resourcetree;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.scene.Parent;
+import javafx.scene.control.TreeItem;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +15,7 @@ public interface ResourceTree<T> extends ResourceTreeMutation<T> {
     void setTreePersistence(ResourceTreePersistence<T> treePersistence);
     void setTreeEventHandler(ResourceTreeEventHandler<T> eventHandler);
     void clearSelection();
+    T getRootItem();
     T getParent(T t); //TODO make observable
     List<T> getChildren(T t); //TODO make observable
     ReadOnlyListProperty<T> getResources();
