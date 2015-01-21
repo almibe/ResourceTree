@@ -47,6 +47,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     public TreeViewResourceTree(T root, boolean showRoot) {
         this.root =  new TreeItem<>(root);
         this.tree = new TreeView<>(this.root);
+        resourceToTreeItemMap.put(root, this.root);
         tree.showRootProperty().set(showRoot);
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
