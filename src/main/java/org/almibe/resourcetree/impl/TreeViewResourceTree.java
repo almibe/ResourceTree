@@ -3,7 +3,9 @@ package org.almibe.resourcetree.impl;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
@@ -24,14 +26,13 @@ import org.almibe.resourcetree.ResourceTreePersistence;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private final TreeItem<T> root;
     private final TreeView<T> tree;
-    private final Map<T, TreeItem<T>> resourceToTreeItemMap = new HashMap<>();
+    private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
+    private final ObservableList<T> resources = FXCollections.observableArrayList();
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
@@ -55,6 +56,16 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 TreeItem<T> node = tree.getSelectionModel().getSelectedItem();
                 if (node != null) {
                     treeEventHandler.onOpen(node.getValue());
+                }
+            }
+        });
+        resourceToTreeItemMap.addListener(new MapChangeListener<T, TreeItem<T>>() {
+            @Override
+            public void onChanged(Change<? extends T, ? extends TreeItem<T>> change) {
+                if (change.wasRemoved() && !change.wasAdded()) {
+                    resources.remove(change.getKey());
+                } else {
+                    resources.add(change.getKey());
                 }
             }
         });
@@ -87,9 +98,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public ReadOnlyListProperty<T> getResources() {
-        //TODO I think I'm going to need to add a new observable list to do this right but for now just return a static list wrapped in an observable
-        ObservableList<T> returnList = FXCollections.observableArrayList(this.resourceToTreeItemMap.keySet());
-        return new ReadOnlyListWrapper(returnList);
+        return new ReadOnlyListWrapper(resources); //TODO this needs testing
     }
 
     /**
