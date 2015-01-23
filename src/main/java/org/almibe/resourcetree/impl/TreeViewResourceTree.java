@@ -18,11 +18,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import org.almibe.resourcetree.NestingRule;
-import org.almibe.resourcetree.ResourceTree;
-import org.almibe.resourcetree.ResourceTreeEventHandler;
-import org.almibe.resourcetree.ResourceTreeItemDisplay;
-import org.almibe.resourcetree.ResourceTreePersistence;
+import org.almibe.resourcetree.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -210,6 +206,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     public void update(T node) {
         //TODO update display of the node in the tree and add checks
         this.treePersistence.update(node);
+    }
+
+    @Override
+    public void load(TreeModel<T> treeModel) {
+
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {

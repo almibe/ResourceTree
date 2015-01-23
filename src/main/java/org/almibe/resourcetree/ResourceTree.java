@@ -18,4 +18,5 @@ public interface ResourceTree<T> extends ResourceTreeMutation<T> {
     T getParent(T t); //TODO make observable
     List<T> getChildren(T t); //TODO make observable
     ReadOnlyListProperty<T> getResources();
+    void load(TreeModel<T> treeModel);
 }
