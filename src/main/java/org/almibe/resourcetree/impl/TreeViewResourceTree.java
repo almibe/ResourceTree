@@ -208,11 +208,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         this.treePersistence.update(node);
     }
 
-    @Override
-    public void load(TreeModel<T> treeModel) {
-
-    }
-
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
         return itemNestingRule.canNest(source.getValue(), target.getValue()) &&
             !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
