@@ -20,9 +20,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import org.almibe.resourcetree.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private final TreeView<T> tree;
@@ -92,8 +90,13 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     public List<T> getChildren(T t) {
         List<T> children = new ArrayList<>();
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
-        treeItem.getChildren().forEach(item -> children.add(item.getValue()));
-        return children;
+        if (treeItem == null) { return null; }
+        if (treeItem.getChildren() != null) {
+            treeItem.getChildren().forEach(item -> children.add(item.getValue()));
+            return children;
+        } else {
+            return new ArrayList<T>();
+        }
     }
 
     @Override
@@ -214,8 +217,35 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     @Override
     public void load(TreeModel<T> treeModel) {
         if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+
+        //clean old values -- is this the only one?
+        resourceToTreeItemMap.clear();
+
+        Map<TreeModel<T>, TreeItem<T>> childToParent = new HashMap<>();
+        Queue<TreeModel<T>> resourceQueue = new LinkedList<>();
+
         TreeItem<T> rootTreeItem = new TreeItem(treeModel.getNode());
+        resourceToTreeItemMap.put(treeModel.getNode(), rootTreeItem);
         this.tree.setRoot(rootTreeItem);
+
+        if (!treeModel.getChildren().isEmpty()) {
+            for (TreeModel<T> childTreeModel : treeModel.getChildren()) {
+                childToParent.put(childTreeModel, rootTreeItem);
+                resourceQueue.add(childTreeModel);
+            }
+            while (!resourceQueue.isEmpty()) {
+                TreeModel<T> item = resourceQueue.poll();
+                TreeItem<T> treeItem = new TreeItem(treeModel.getNode());
+                TreeItem<T> parent = childToParent.remove(item);
+                parent.getChildren().add(treeItem);
+                resourceToTreeItemMap.put(treeModel.getNode(), rootTreeItem);
+
+                for (TreeModel<T> childTreeModel : item.getChildren()) {
+                    childToParent.put(childTreeModel, treeItem);
+                    resourceQueue.add(childTreeModel);
+                }
+            }
+        }
     }
 
     @Override

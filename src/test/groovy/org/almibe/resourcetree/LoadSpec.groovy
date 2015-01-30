@@ -35,4 +35,15 @@ class LoadSpec extends Specification {
         then:
         treeViewResourceTree.getRootItem() == newRoot
     }
+
+    def 'load a tree with one level under root'() {
+        given:
+        FolderResource newRoot = new FolderResource("Root")
+        TreeModel<Resource> treeModel = new TreeModel(newRoot, [new TreeModel<Resource>(new FolderResource("Child")), new TreeModel<Resource>(new FolderResource("Child"))])
+        when:
+        treeViewResourceTree.load(treeModel)
+        then:
+        treeViewResourceTree.getRootItem() == newRoot
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItem()).size() == 2
+    }
 }
