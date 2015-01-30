@@ -14,4 +14,5 @@ public interface ResourceTreeMutation<T> {
     void update(T node);
 //    void update(Collection<T> nodes);
     void load(TreeModel<T> treeModel);
+    <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler);
 }
