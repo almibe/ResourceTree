@@ -1,6 +1,7 @@
 package org.almibe.resourcetree.demo;
 
 import org.almibe.resourcetree.ResourceTreePersistence;
+import org.almibe.resourcetree.TreeModel;
 
 public class ResourcePersistence implements ResourceTreePersistence {
     @Override
@@ -25,6 +26,11 @@ public class ResourcePersistence implements ResourceTreePersistence {
 
     @Override
     public void update(Object node) {
+
+    }
+
+    @Override
+    public void load(TreeModel treeModel) {
 
     }
 }
