@@ -31,11 +31,6 @@ public class JsonPersistence implements ResourceTreePersistence {
     }
 
     @Override
-    public void load(TreeModel treeModel) {
-
-    }
-
-    @Override
     public void load(TreeModel treeModel, ResourceTreeModeler resourceTreeModeler) {
 
     }

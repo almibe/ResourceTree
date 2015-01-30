@@ -215,43 +215,43 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public void load(TreeModel<T> treeModel) {
+    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
+        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+        if (resourceTreeModeler == null) { throw new IllegalArgumentException("resourceTreeModeler can't be null"); }
+
         if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
 
         //clean old values -- is this the only one?
         resourceToTreeItemMap.clear();
 
-        Map<TreeModel<T>, TreeItem<T>> childToParent = new HashMap<>();
-        Queue<TreeModel<T>> resourceQueue = new LinkedList<>();
+        Map<TreeModel<M>, TreeItem<T>> childToParent = new HashMap<>();
+        Queue<TreeModel<M>> resourceQueue = new LinkedList<>();
 
-        TreeItem<T> rootTreeItem = new TreeItem(treeModel.getNode());
-        resourceToTreeItemMap.put(treeModel.getNode(), rootTreeItem);
+        T resource = resourceTreeModeler.toResource(treeModel.getNode());
+
+        TreeItem<T> rootTreeItem = new TreeItem(resource);
+        resourceToTreeItemMap.put(resource, rootTreeItem);
         this.tree.setRoot(rootTreeItem);
 
         if (!treeModel.getChildren().isEmpty()) {
-            for (TreeModel<T> childTreeModel : treeModel.getChildren()) {
+            for (TreeModel<M> childTreeModel : treeModel.getChildren()) {
                 childToParent.put(childTreeModel, rootTreeItem);
                 resourceQueue.add(childTreeModel);
             }
             while (!resourceQueue.isEmpty()) {
-                TreeModel<T> item = resourceQueue.poll();
-                TreeItem<T> treeItem = new TreeItem(treeModel.getNode());
+                TreeModel<M> item = resourceQueue.poll();
+                T itemResource = resourceTreeModeler.toResource(item.getNode());
+                TreeItem<T> treeItem = new TreeItem(itemResource);
                 TreeItem<T> parent = childToParent.remove(item);
                 parent.getChildren().add(treeItem);
-                resourceToTreeItemMap.put(treeModel.getNode(), rootTreeItem);
+                resourceToTreeItemMap.put(itemResource, rootTreeItem);
 
-                for (TreeModel<T> childTreeModel : item.getChildren()) {
+                for (TreeModel<M> childTreeModel : item.getChildren()) {
                     childToParent.put(childTreeModel, treeItem);
                     resourceQueue.add(childTreeModel);
                 }
             }
         }
-    }
-
-    @Override
-    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
-        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
-        if (resourceTreeModeler == null) { throw new IllegalArgumentException("resourceTreeModeler can't be null"); }
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {

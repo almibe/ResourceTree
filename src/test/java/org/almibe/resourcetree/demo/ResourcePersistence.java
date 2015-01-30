@@ -4,39 +4,34 @@ import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
 
-public class ResourcePersistence implements ResourceTreePersistence {
+public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     @Override
-    public void move(Object node, Object parent) {
+    public void move(Resource node, Resource parent) {
 
     }
 
     @Override
-    public void add(Object node) {
+    public void add(Resource node) {
 
     }
 
     @Override
-    public void add(Object node, Object parent) {
+    public void add(Resource node, Resource parent) {
 
     }
 
     @Override
-    public void remove(Object node) {
+    public void remove(Resource node) {
 
     }
 
     @Override
-    public void update(Object node) {
+    public void update(Resource node) {
 
     }
 
     @Override
-    public void load(TreeModel treeModel) {
-
-    }
-
-    @Override
-    public void load(TreeModel treeModel, ResourceTreeModeler resourceTreeModeler) {
+    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<Resource, M> resourceTreeModeler) {
 
     }
 }

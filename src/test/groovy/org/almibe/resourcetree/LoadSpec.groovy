@@ -2,6 +2,7 @@ import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.TreeModel
 import org.almibe.resourcetree.demo.FolderResource
 import org.almibe.resourcetree.demo.Resource
+import org.almibe.resourcetree.impl.EqualityModeler
 import org.almibe.resourcetree.impl.NullPersistence
 import org.almibe.resourcetree.impl.TreeViewResourceTree
 import spock.lang.Shared
@@ -21,7 +22,7 @@ class LoadSpec extends Specification {
 
     def 'load null resource model should throw illegal arguments exception'() {
         when:
-        treeViewResourceTree.load(null)
+        treeViewResourceTree.load(null, new EqualityModeler<Resource>())
         then:
         thrown(IllegalArgumentException)
     }
@@ -31,7 +32,7 @@ class LoadSpec extends Specification {
         FolderResource newRoot = new FolderResource("Root")
         TreeModel<Resource> treeModel = new TreeModel(newRoot)
         when:
-        treeViewResourceTree.load(treeModel)
+        treeViewResourceTree.load(treeModel, new EqualityModeler<Resource>())
         then:
         treeViewResourceTree.getRootItem() == newRoot
     }
@@ -41,7 +42,7 @@ class LoadSpec extends Specification {
         FolderResource newRoot = new FolderResource("Root")
         TreeModel<Resource> treeModel = new TreeModel(newRoot, [new TreeModel<Resource>(new FolderResource("Child")), new TreeModel<Resource>(new FolderResource("Child"))])
         when:
-        treeViewResourceTree.load(treeModel)
+        treeViewResourceTree.load(treeModel, new EqualityModeler<Resource>())
         then:
         treeViewResourceTree.getRootItem() == newRoot
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItem()).size() == 2
