@@ -7,8 +7,9 @@ buildscript {
     }
 }
 
-apply plugin: 'bundle'
 apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'bundle'
 apply plugin: 'maven'
 
 sourceCompatibility = '1.8'
@@ -27,7 +28,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.10'
+    compile 'com.google.code.gson:gson:2.3.1'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    //below is a work around for https://issues.gradle.org/browse/GRADLE-3046
+    testCompile files("${System.properties['java.home']}/lib/ext/jfxrt.jar")
 }
 
 bundle {
