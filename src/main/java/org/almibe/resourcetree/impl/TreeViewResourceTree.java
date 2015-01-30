@@ -208,6 +208,17 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         this.treePersistence.update(node);
     }
 
+    @Override
+    public void load(TreeModel<T> treeModel) {
+        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+    }
+
+    @Override
+    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
+        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+        if (resourceTreeModeler == null) { throw new IllegalArgumentException("resourceTreeModeler can't be null"); }
+    }
+
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
         return itemNestingRule.canNest(source.getValue(), target.getValue()) &&
             !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
