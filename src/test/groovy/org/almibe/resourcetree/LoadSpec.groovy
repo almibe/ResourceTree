@@ -1,4 +1,5 @@
 import javafx.embed.swing.JFXPanel
+import org.almibe.resourcetree.TreeModel
 import org.almibe.resourcetree.demo.FolderResource
 import org.almibe.resourcetree.demo.Resource
 import org.almibe.resourcetree.impl.NullPersistence
@@ -23,5 +24,15 @@ class LoadSpec extends Specification {
         treeViewResourceTree.load(null)
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'load a single resource'() {
+        given:
+        FolderResource newRoot = new FolderResource("Root")
+        TreeModel<Resource> treeModel = new TreeModel(newRoot)
+        when:
+        treeViewResourceTree.load(treeModel)
+        then:
+        treeViewResourceTree.getRootItem() == newRoot
     }
 }

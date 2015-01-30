@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TreeViewResourceTree<T> implements ResourceTree<T> {
-    private final TreeItem<T> root;
     private final TreeView<T> tree;
     private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
     private final ObservableList<T> resources = FXCollections.observableArrayList();
@@ -41,9 +40,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private final String selectedStyle = "list-cell-selected";
 
     public TreeViewResourceTree(T root, boolean showRoot) {
-        this.root =  new TreeItem<>(root);
-        this.tree = new TreeView<>(this.root);
-        resourceToTreeItemMap.put(root, this.root);
+        TreeItem<T> rootTreeItem =  new TreeItem<>(root);
+        this.tree = new TreeView<>(rootTreeItem);
+        resourceToTreeItemMap.put(root, rootTreeItem);
         tree.showRootProperty().set(showRoot);
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
@@ -76,7 +75,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public T getRootItem() {
-        return this.root.getValue();
+        if (this.tree.getRoot() != null) {
+            return this.tree.getRoot().getValue();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -109,7 +112,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
-        addOrdered(root, treeItem);
+        addOrdered(this.tree.getRoot(), treeItem);
         this.treePersistence.add(resource);
     }
     
@@ -211,6 +214,8 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     @Override
     public void load(TreeModel<T> treeModel) {
         if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+        TreeItem<T> rootTreeItem = new TreeItem(treeModel.getNode());
+        this.tree.setRoot(rootTreeItem);
     }
 
     @Override
@@ -279,7 +284,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
             setOnMouseDragEntered((MouseDragEvent mouseDragEvent) -> {
                 TreeItem<T> source = dragSource.getTreeItem();
                 TreeItem<T> target = this.getTreeItem();
-                if(target == null) { target = root; }
+                if(target == null) { target = tree.getRoot(); }
                 if(isValidDrop(source, target)) {
                     tree.setCursor(Cursor.MOVE);
                     this.getStyleClass().add(selectedStyle);
@@ -299,7 +304,7 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
                 tree.setCursor(Cursor.DEFAULT);
                 this.getStyleClass().remove(selectedStyle);
                 if(target == null) {
-                    target = root;
+                    target = tree.getRoot();
                 }
                 if (!isValidDrop(source, target)) {
                     mouseDragEvent.consume();
