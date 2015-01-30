@@ -5,14 +5,14 @@ import java.util.List;
 
 public class TreeModel<T> {
     private final T node;
-    private final List<T> children;
+    private final List<TreeModel<T>> children;
 
     public TreeModel(T node) {
         this.node = node;
         this.children = new ArrayList<>();
     }
 
-    public TreeModel(T node, List<T> children) {
+    public TreeModel(T node, List<TreeModel<T>> children) {
         this.node = node;
         this.children = children;
     }
@@ -21,7 +21,7 @@ public class TreeModel<T> {
         return node;
     }
 
-    public List<T> getChildren() {
+    public List<TreeModel<T>> getChildren() {
         return children;
     }
 }
