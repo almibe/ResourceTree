@@ -36,4 +36,9 @@ public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<Resource, M> resourceTreeModeler) {
 
     }
+
+    @Override
+    public void clear() {
+
+    }
 }

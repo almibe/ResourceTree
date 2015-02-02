@@ -43,4 +43,9 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
 
     }
+
+    @Override
+    public void clear() {
+
+    }
 }

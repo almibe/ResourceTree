@@ -267,6 +267,12 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         }
     }
 
+    @Override
+    public void clear() {
+        tree.setRoot(null);
+        resourceToTreeItemMap.clear();
+    }
+
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
         if (source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source)) {
             return false;

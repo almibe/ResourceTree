@@ -13,4 +13,5 @@ public class NullPersistence<T> implements ResourceTreePersistence<T> {
     @Override public void remove(T node) {}
     @Override public void update(T node) {}
     @Override public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {}
+    @Override public void clear() {}
 }
