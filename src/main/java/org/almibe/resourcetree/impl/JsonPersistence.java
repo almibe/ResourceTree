@@ -4,34 +4,43 @@ import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
 
-public class JsonPersistence implements ResourceTreePersistence {
+import java.io.File;
+import java.util.List;
+
+public class JsonPersistence<T> implements ResourceTreePersistence<T> {
+    private final File jsonFile;
+
+    public JsonPersistence(File jsonFile) {
+        this.jsonFile = jsonFile;
+    }
+
     @Override
-    public void move(Object node, Object parent) {
+    public void move(T node, T parent) {
 
     }
 
     @Override
-    public void add(Object node) {
+    public void add(T node) {
 
     }
 
     @Override
-    public void add(Object node, Object parent) {
+    public void add(T node, T parent) {
 
     }
 
     @Override
-    public void remove(Object node) {
+    public void remove(T node) {
 
     }
 
     @Override
-    public void update(Object node) {
+    public void update(T node) {
 
     }
 
     @Override
-    public void load(TreeModel treeModel, ResourceTreeModeler resourceTreeModeler) {
+    public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
 
     }
 }
