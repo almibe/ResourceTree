@@ -14,7 +14,7 @@ public interface ResourceTree<T> extends ResourceTreeMutation<T> {
     void setTreePersistence(ResourceTreePersistence<T> treePersistence);
     void setTreeEventHandler(ResourceTreeEventHandler<T> eventHandler);
     void clearSelection();
-    T getRootItem();
+    List<T> getRootItems();
     T getParent(T t); //TODO make observable
     List<T> getChildren(T t); //TODO make observable
     ReadOnlyListProperty<T> getResources();
