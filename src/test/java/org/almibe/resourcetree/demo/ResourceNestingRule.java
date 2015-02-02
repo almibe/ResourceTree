@@ -7,4 +7,9 @@ public class ResourceNestingRule implements NestingRule<Resource> {
     public boolean canNest(Resource source, Resource target) {
         return target instanceof ParentResource;
     }
+
+    @Override
+    public boolean canNestInRoot(Resource node) {
+        return true;
+    }
 }

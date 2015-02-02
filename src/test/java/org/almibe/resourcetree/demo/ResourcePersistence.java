@@ -4,6 +4,8 @@ import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
 
+import java.util.List;
+
 public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     @Override
     public void move(Resource node, Resource parent) {
@@ -31,7 +33,7 @@ public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     }
 
     @Override
-    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<Resource, M> resourceTreeModeler) {
+    public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<Resource, M> resourceTreeModeler) {
 
     }
 }

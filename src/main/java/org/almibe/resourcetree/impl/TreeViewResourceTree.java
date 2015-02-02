@@ -31,17 +31,27 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private NestingRule<T> itemNestingRule;
     private ResourceTreePersistence<T> treePersistence;
     private ResourceTreeEventHandler<T> treeEventHandler;
+    private final TreeItem<T> rootTreeItem;
 
     //variables used for DnD
     private DraggableCell dragSource;
     private Image cross = new Image(TreeViewResourceTree.class.getResourceAsStream("xb24.png"));
     private final String selectedStyle = "list-cell-selected";
 
-    public TreeViewResourceTree(T root, boolean showRoot) {
-        TreeItem<T> rootTreeItem =  new TreeItem<>(root);
+    public TreeViewResourceTree() {
+        this(new ArrayList<>());
+    }
+
+    public TreeViewResourceTree(List<T> root) {
+        //make root null since it is never shown
+        this.rootTreeItem =  new TreeItem<>();
         this.tree = new TreeView<>(rootTreeItem);
-        resourceToTreeItemMap.put(root, rootTreeItem);
-        tree.showRootProperty().set(showRoot);
+        tree.showRootProperty().set(false);
+        for(T currentNode : root) {
+            TreeItem<T> currentTreeItem =  new TreeItem<>(null);
+            rootTreeItem.getChildren().add(currentTreeItem);
+            resourceToTreeItemMap.put(currentNode, currentTreeItem);
+        }
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
@@ -72,12 +82,12 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public T getRootItem() {
-        if (this.tree.getRoot() != null) {
-            return this.tree.getRoot().getValue();
-        } else {
-            return null;
+    public List<T> getRootItems() {
+        List<T> returnList = new ArrayList<>();
+        for (TreeItem<T> treeItem : tree.getRoot().getChildren()) {
+            returnList.add(treeItem.getValue());
         }
+        return returnList;
     }
 
     @Override
@@ -215,11 +225,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
     }
 
     @Override
-    public <M> void load(TreeModel<M> treeModel, ResourceTreeModeler<T, M> resourceTreeModeler) {
-        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
+    public <M> void load(List<TreeModel<M>> treeModelList, ResourceTreeModeler<T, M> resourceTreeModeler) {
+        if (treeModelList == null) { throw new IllegalArgumentException("treeModel can't be null"); }
         if (resourceTreeModeler == null) { throw new IllegalArgumentException("resourceTreeModeler can't be null"); }
-
-        if (treeModel == null) { throw new IllegalArgumentException("treeModel can't be null"); }
 
         //clean old values -- is this the only one?
         resourceToTreeItemMap.clear();
@@ -227,36 +235,46 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         Map<TreeModel<M>, TreeItem<T>> childToParent = new HashMap<>();
         Queue<TreeModel<M>> resourceQueue = new LinkedList<>();
 
-        T resource = resourceTreeModeler.toResource(treeModel.getNode());
+        TreeItem<T> nullRoot = new TreeItem<>();
+        this.tree.setRoot(nullRoot);
 
-        TreeItem<T> rootTreeItem = new TreeItem(resource);
-        resourceToTreeItemMap.put(resource, rootTreeItem);
-        this.tree.setRoot(rootTreeItem);
+        for (TreeModel<M> treeModel : treeModelList) {
+            T resource = resourceTreeModeler.toResource(treeModel.getNode());
 
-        if (!treeModel.getChildren().isEmpty()) {
-            for (TreeModel<M> childTreeModel : treeModel.getChildren()) {
-                childToParent.put(childTreeModel, rootTreeItem);
-                resourceQueue.add(childTreeModel);
-            }
-            while (!resourceQueue.isEmpty()) {
-                TreeModel<M> item = resourceQueue.poll();
-                T itemResource = resourceTreeModeler.toResource(item.getNode());
-                TreeItem<T> treeItem = new TreeItem(itemResource);
-                TreeItem<T> parent = childToParent.remove(item);
-                parent.getChildren().add(treeItem);
-                resourceToTreeItemMap.put(itemResource, rootTreeItem);
+            TreeItem<T> rootTreeItem = new TreeItem(resource);
+            resourceToTreeItemMap.put(resource, rootTreeItem);
+            this.tree.getRoot().getChildren().add(rootTreeItem);
 
-                for (TreeModel<M> childTreeModel : item.getChildren()) {
-                    childToParent.put(childTreeModel, treeItem);
+            if (!treeModel.getChildren().isEmpty()) {
+                for (TreeModel<M> childTreeModel : treeModel.getChildren()) {
+                    childToParent.put(childTreeModel, rootTreeItem);
                     resourceQueue.add(childTreeModel);
+                }
+                while (!resourceQueue.isEmpty()) {
+                    TreeModel<M> item = resourceQueue.poll();
+                    T itemResource = resourceTreeModeler.toResource(item.getNode());
+                    TreeItem<T> treeItem = new TreeItem(itemResource);
+                    TreeItem<T> parent = childToParent.remove(item);
+                    parent.getChildren().add(treeItem);
+                    resourceToTreeItemMap.put(itemResource, rootTreeItem);
+
+                    for (TreeModel<M> childTreeModel : item.getChildren()) {
+                        childToParent.put(childTreeModel, treeItem);
+                        resourceQueue.add(childTreeModel);
+                    }
                 }
             }
         }
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
-        return itemNestingRule.canNest(source.getValue(), target.getValue()) &&
-            !(source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source));
+        if (source == null || target == null || source == target || isChild(source, target) || target.getChildren().contains(source)) {
+            return false;
+        } else if (target == rootTreeItem) {
+            return itemNestingRule.canNestInRoot(source.getValue());
+        } else {
+            return itemNestingRule.canNest(source.getValue(), target.getValue());
+        }
     }
 
     private boolean isChild(TreeItem<T> source, TreeItem<T> target) {
