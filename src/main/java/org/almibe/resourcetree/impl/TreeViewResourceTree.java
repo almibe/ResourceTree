@@ -269,7 +269,9 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
 
     @Override
     public void clear() {
-        tree.setRoot(null);
+        if (tree.getRoot() != null && tree.getRoot().getChildren() != null) {
+            tree.getRoot().getChildren().clear();
+        }
         resourceToTreeItemMap.clear();
     }
 
