@@ -1,5 +1,6 @@
+package org.almibe.resourcetree
+
 import javafx.embed.swing.JFXPanel
-import org.almibe.resourcetree.TreeModel
 import org.almibe.resourcetree.demo.FolderResource
 import org.almibe.resourcetree.demo.Resource
 import org.almibe.resourcetree.impl.EqualityModeler
