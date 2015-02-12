@@ -30,6 +30,7 @@ repositories {
 dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'org.loadui:testFx:3.1.2'
     //below is a work around for https://issues.gradle.org/browse/GRADLE-3046
     testCompile files("${System.properties['java.home']}/lib/ext/jfxrt.jar")
 }
