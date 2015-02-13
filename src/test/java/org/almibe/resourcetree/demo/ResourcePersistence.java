@@ -33,7 +33,7 @@ public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     }
 
     @Override
-    public <M> void load(List<TreeModel<M>> treeModel, ResourceTreeModeler<Resource, M> resourceTreeModeler) {
+    public void load() {
 
     }
 
