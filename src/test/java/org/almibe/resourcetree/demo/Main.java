@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import org.almibe.resourcetree.ResourceTree;
+import org.almibe.resourcetree.impl.NullPersistence;
 import org.almibe.resourcetree.impl.TreeViewResourceTree;
 
 public class Main extends Application {
@@ -19,7 +20,7 @@ public class Main extends Application {
         resourceTree.setItemNestingRule(new ResourceNestingRule());
         resourceTree.setItemComparator(new ResourceComparator());
         resourceTree.setItemDisplay(new ResourceItemDisplay());
-        resourceTree.setTreePersistence(new ResourcePersistence());
+        resourceTree.setTreePersistence(new NullPersistence<>());
         resourceTree.setTreeEventHandler(new ResourceEventHandler());
         resourceTree.add(folder);
         resourceTree.add(new FolderResource("Docs"));
