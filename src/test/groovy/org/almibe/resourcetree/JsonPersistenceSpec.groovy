@@ -68,7 +68,6 @@ public class JsonPersistenceSpec extends Specification {
     }
 
     def 'add nested nodes'() {
-
         when:
         String test = "Test";
         treeViewResourceTree.add(test)
@@ -89,10 +88,25 @@ public class JsonPersistenceSpec extends Specification {
         resources.get(0).children.size() == 1
         resources.get(1).children.size() == 0
     }
-//
-//    def 'test clearing resource tree'() {
-//
-//    }
+
+    def 'test clearing resource tree'() {
+        when:
+        String test = "Test";
+        treeViewResourceTree.add(test)
+        treeViewResourceTree.add("Test2")
+        treeViewResourceTree.add("ChildTest", test)
+        treeViewResourceTree.clear()
+
+        Reader reader = new FileReader(jsonFile);
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        reader = new FileReader(jsonFile);
+        println(reader.text)
+        reader.close();
+
+        then:
+        treeViewResourceTree.rootItems.size() == 0
+        resources.size() == 0
+    }
 
     /* LOADING TESTS
     def 'load null resource model should throw illegal arguments exception'() {

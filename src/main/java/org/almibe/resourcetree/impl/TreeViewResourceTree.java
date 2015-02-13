@@ -235,6 +235,7 @@ public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
             tree.getRoot().getChildren().clear();
         }
         resourceToTreeItemMap.clear();
+        this.treePersistence.clear();
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {
