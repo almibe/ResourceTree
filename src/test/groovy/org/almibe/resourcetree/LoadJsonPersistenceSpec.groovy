@@ -65,18 +65,19 @@ public class LoadJsonPersistenceSpec extends Specification {
         thrown(Exception)
     }
 
-//    def 'load json file with empty list'() {
-//        given:
-//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-//
-//        when:
-//
-//        treeViewResourceTree.load()
-//        then:
-//        thrown(IllegalArgumentException)
-//    }
+    def 'load json file with empty list'() {
+        given:
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getResourceAsStream("LoadTestEmpty.json"))
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+
+        when:
+        treeViewResourceTree.load()
+
+        then:
+        treeViewResourceTree.getRootItems().size() == 0
+    }
 //
 //    def 'load a single resource'() {
 //        given:
