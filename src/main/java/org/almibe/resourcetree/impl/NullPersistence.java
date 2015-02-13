@@ -1,8 +1,9 @@
 package org.almibe.resourcetree.impl;
 
+import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 
-public class NullPersistence<T> implements ResourceTreePersistence<T> {
+public class NullPersistence<T, M> implements ResourceTreePersistence<T, M> {
     @Override public void move(T node, T parent) {}
     @Override public void add(T node) {}
     @Override public void add(T node, T parent) {}
@@ -10,4 +11,5 @@ public class NullPersistence<T> implements ResourceTreePersistence<T> {
     @Override public void update(T node) {}
     @Override public void load() {}
     @Override public void clear() {}
+    @Override public void setModeler(ResourceTreeModeler<T, M> resourceTreeModeler) {}
 }
