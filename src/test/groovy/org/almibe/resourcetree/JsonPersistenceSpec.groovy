@@ -33,6 +33,7 @@ public class JsonPersistenceSpec extends Specification {
         resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
         resourceTreePersistence.setModeler(new EqualityModeler<String>())
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+        treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
     }
 
     def 'adding a single node'() {
@@ -42,18 +43,23 @@ public class JsonPersistenceSpec extends Specification {
         treeViewResourceTree.rootItems.size() == 1
         Reader reader = new FileReader(jsonFile);
         List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        println(reader.text)
         reader.close();
         resources.size() == 1
     }
-//
-//    def 'add two child nodes'() {
-//        given:
-//
-//        when:
-//
-//        then:
-//        treeViewResourceTree.rootItems.size() == 2
-//    }
+
+    def 'add two child nodes'() {
+        when:
+        treeViewResourceTree.add("Test")
+        treeViewResourceTree.add("Test2")
+        then:
+        treeViewResourceTree.rootItems.size() == 2
+        Reader reader = new FileReader(jsonFile);
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        println(reader.text)
+        reader.close();
+        resources.size() == 2
+    }
 //
 //    def 'add nested nodes'() {
 //        given:
