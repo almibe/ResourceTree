@@ -60,17 +60,26 @@ public class JsonPersistenceSpec extends Specification {
         reader.close();
         resources.size() == 2
     }
-//
-//    def 'add nested nodes'() {
-//        given:
-//
-//        when:
-//
-//        then:
-//        treeViewResourceTree.rootItems.size() == 2
-//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 0
-//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 1
-//    }
+
+    def 'add nested nodes'() {
+
+        when:
+        String test = "Test";
+        treeViewResourceTree.add(test)
+        treeViewResourceTree.add("Test2")
+        treeViewResourceTree.add("ChildTest", test)
+        then:
+        treeViewResourceTree.rootItems.size() == 2
+        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 1
+        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 0
+        Reader reader = new FileReader(jsonFile);
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        println(reader.text)
+        reader.close();
+        resources.size() == 2
+        resources.get(0).children.size() == 1
+        resources.get(1).children.size() == 0
+    }
 //
 //    def 'test clearing resource tree'() {
 //
