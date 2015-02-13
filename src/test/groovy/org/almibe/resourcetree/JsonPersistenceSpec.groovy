@@ -69,4 +69,35 @@ public class JsonPersistenceSpec extends Specification {
 //    def 'test clearing resource tree'() {
 //
 //    }
+
+    /* LOADING TESTS
+    def 'load null resource model should throw illegal arguments exception'() {
+        when:
+        treeViewResourceTree.load(null, new EqualityModeler<Resource>())
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'load a single resource'() {
+        given:
+        FolderResource newRoot = new FolderResource("Root")
+        TreeModel<Resource> treeModel = new TreeModel(newRoot)
+        when:
+        treeViewResourceTree.load([treeModel], new EqualityModeler<Resource>())
+        then:
+        treeViewResourceTree.getRootItems() == [newRoot]
+    }
+
+    def 'load a tree with one level under root'() {
+        given:
+        FolderResource newRoot = new FolderResource("Root")
+        TreeModel<Resource> treeModel = new TreeModel(newRoot, [new TreeModel<Resource>(new FolderResource("Child")), new TreeModel<Resource>(new FolderResource("Child"))])
+        when:
+        treeViewResourceTree.load([treeModel], new EqualityModeler<Resource>())
+        then:
+        treeViewResourceTree.getRootItems() == [newRoot]
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 2
+    }
+
+     */
 }
