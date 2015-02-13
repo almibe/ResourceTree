@@ -1,13 +1,17 @@
 package org.almibe.resourcetree.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,48 +53,43 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
 
     @Override
     public void load() {
-/*
-        if (treeModelList == null) { throw new IllegalArgumentException("treeModel can't be null"); }
-        if (resourceTreeModeler == null) { throw new IllegalArgumentException("resourceTreeModeler can't be null"); }
+        try (Reader reader = new FileReader(jsonFile)) {
+            resourceTree.setTreePersistence(new NullPersistence()); //start with null persistence while loading
+            List<TreeModel<M>> rootModels = gson.fromJson(reader, new TypeToken<List<TreeModel<M>>>() {}.getType());
+            reader.close();
 
-        //clean old values -- is this the only one?
-        resourceToTreeItemMap.clear();
+            List<T> parents = new ArrayList<>();
+            List<T> nextParents = new ArrayList<>();
+            List<TreeModel<M>> children = new ArrayList<>();
+            List<TreeModel<M>> nextChildren = new ArrayList<>();
 
-        Map<TreeModel<M>, TreeItem<T>> childToParent = new HashMap<>();
-        Queue<TreeModel<M>> resourceQueue = new LinkedList<>();
-
-        TreeItem<T> nullRoot = new TreeItem<>();
-        this.tree.setRoot(nullRoot);
-
-        for (TreeModel<M> treeModel : treeModelList) {
-            T resource = resourceTreeModeler.toResource(treeModel.getNode());
-
-            TreeItem<T> rootTreeItem = new TreeItem(resource);
-            resourceToTreeItemMap.put(resource, rootTreeItem);
-            this.tree.getRoot().getChildren().add(rootTreeItem);
-
-            if (!treeModel.getChildren().isEmpty()) {
-                for (TreeModel<M> childTreeModel : treeModel.getChildren()) {
-                    childToParent.put(childTreeModel, rootTreeItem);
-                    resourceQueue.add(childTreeModel);
-                }
-                while (!resourceQueue.isEmpty()) {
-                    TreeModel<M> item = resourceQueue.poll();
-                    T itemResource = resourceTreeModeler.toResource(item.getNode());
-                    TreeItem<T> treeItem = new TreeItem(itemResource);
-                    TreeItem<T> parent = childToParent.remove(item);
-                    parent.getChildren().add(treeItem);
-                    resourceToTreeItemMap.put(itemResource, rootTreeItem);
-
-                    for (TreeModel<M> childTreeModel : item.getChildren()) {
-                        childToParent.put(childTreeModel, treeItem);
-                        resourceQueue.add(childTreeModel);
-                    }
-                }
+            for (TreeModel<M> treeModel : rootModels) {
+                resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()));
+                children.add(treeModel);
             }
-        }
 
- */
+            parents.addAll(resourceTree.getRootItems());
+
+            while (listOfListSizeModel(children) > 0) {
+                nextChildren.clear();
+                nextParents.clear();
+                for (int i = 0; i < children.size(); i++) {
+                    for (TreeModel<M> treeModel : children) {
+                        nextChildren.addAll(treeModel.getChildren());
+                        resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()));
+                    }
+                    nextParents.addAll(resourceTree.getChildren(parents.get(i)));
+                }
+                parents.clear();
+                parents.addAll(nextParents);
+                children.clear();
+                children.addAll(nextChildren);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            resourceTree.setTreePersistence(this);
+        }
     }
 
     @Override
@@ -100,7 +99,6 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
 
     private void writeJsonFile() {
         List<TreeModel<M>> modelList = new ArrayList<>();
-        //convert tree contents to a tree of model objects
         List<TreeModel<M>> parents = new ArrayList<>();
         List<TreeModel<M>> nextParents = new ArrayList<>();
         List<List<T>> children = new ArrayList<>();
@@ -125,7 +123,7 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
             children.clear();
             children.addAll(nextChildren);
         }
-        //persist modelList via gson and write
+
         if (jsonFile.exists()) {
             try { //TODO replace with try with resource
                 FileWriter fileWriter = new FileWriter(jsonFile);
@@ -153,6 +151,15 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
         }
         return size;
     }
+
+    private <L> int listOfListSizeModel(List<TreeModel<L>> lists) {
+        int size = 0;
+        for (TreeModel<L> list : lists) {
+            size += list.getChildren().size();
+        }
+        return size;
+    }
+
 
     @Override
     public void setModeler(ResourceTreeModeler<T, M> resourceTreeModeler) {
