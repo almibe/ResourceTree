@@ -39,12 +39,15 @@ public class JsonPersistenceSpec extends Specification {
     def 'adding a single node'() {
         when:
         treeViewResourceTree.add("Test")
-        then:
-        treeViewResourceTree.rootItems.size() == 1
+
         Reader reader = new FileReader(jsonFile);
         List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        reader = new FileReader(jsonFile);
         println(reader.text)
         reader.close();
+
+        then:
+        treeViewResourceTree.rootItems.size() == 1
         resources.size() == 1
     }
 
@@ -52,12 +55,15 @@ public class JsonPersistenceSpec extends Specification {
         when:
         treeViewResourceTree.add("Test")
         treeViewResourceTree.add("Test2")
-        then:
-        treeViewResourceTree.rootItems.size() == 2
+
         Reader reader = new FileReader(jsonFile);
         List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        reader = new FileReader(jsonFile);
         println(reader.text)
         reader.close();
+
+        then:
+        treeViewResourceTree.rootItems.size() == 2
         resources.size() == 2
     }
 
@@ -68,14 +74,17 @@ public class JsonPersistenceSpec extends Specification {
         treeViewResourceTree.add(test)
         treeViewResourceTree.add("Test2")
         treeViewResourceTree.add("ChildTest", test)
+
+        Reader reader = new FileReader(jsonFile);
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        reader = new FileReader(jsonFile);
+        println(reader.text)
+        reader.close();
+
         then:
         treeViewResourceTree.rootItems.size() == 2
         treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 1
         treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 0
-        Reader reader = new FileReader(jsonFile);
-        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
-        println(reader.text)
-        reader.close();
         resources.size() == 2
         resources.get(0).children.size() == 1
         resources.get(1).children.size() == 0
