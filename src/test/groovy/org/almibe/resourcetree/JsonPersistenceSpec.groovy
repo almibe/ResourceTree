@@ -3,8 +3,7 @@ package org.almibe.resourcetree
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
-import org.almibe.resourcetree.demo.FileResource
-import org.almibe.resourcetree.demo.Resource
+import org.almibe.resourcetree.impl.EqualityModeler
 import org.almibe.resourcetree.impl.JsonPersistence
 import org.almibe.resourcetree.impl.TreeViewResourceTree
 import org.junit.ClassRule
@@ -23,24 +22,26 @@ public class JsonPersistenceSpec extends Specification {
     @Shared
     Gson gson = new Gson();
 
-    TreeViewResourceTree<Resource> treeViewResourceTree
+    TreeViewResourceTree<String, String> treeViewResourceTree
+    ResourceTreePersistence<String, String> resourceTreePersistence;
 
     File jsonFile
 
     def setup() {
         jsonFile = temporaryFolder.newFile()
         treeViewResourceTree = new TreeViewResourceTree<>()
-        treeViewResourceTree.setTreePersistence(new JsonPersistence<Resource>(jsonFile))
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
     }
 
     def 'adding a single node'() {
         when:
-        treeViewResourceTree.add(new FileResource("Test"))
+        treeViewResourceTree.add("Test")
         then:
         treeViewResourceTree.rootItems.size() == 1
         Reader reader = new FileReader(jsonFile);
-        List<Resource> resources = gson.fromJson(reader, new TypeToken<List<Resource>>(){}.getType());
-        println(reader.text)
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
         reader.close();
         resources.size() == 1
     }

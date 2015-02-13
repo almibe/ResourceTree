@@ -1,14 +1,18 @@
 package org.almibe.resourcetree.impl;
 
+import com.google.gson.Gson;
 import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
+import org.almibe.resourcetree.TreeModel;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
+    private final Gson gson = new Gson();
     private final File jsonFile;
     private final ResourceTree<T, M> resourceTree;
     private ResourceTreeModeler<T, M> resourceTreeModeler;
@@ -95,9 +99,59 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
     }
 
     private void writeJsonFile() {
-        List<M> modelList = new ArrayList<>();
+        List<TreeModel<M>> modelList = new ArrayList<>();
         //convert tree contents to a tree of model objects
+        List<TreeModel<M>> parents = new ArrayList<>();
+        List<TreeModel<M>> nextParents = new ArrayList<>();
+        List<List<T>> children = new ArrayList<>();
+        List<List<T>> nextChildren = new ArrayList<>();
+        for (T t : resourceTree.getRootItems()) {
+            modelList.add(new TreeModel<>(resourceTreeModeler.toResourceModel(t)));
+            children.add(resourceTree.getChildren(t));
+        }
+        parents.addAll(modelList);
+        while (listOfListSize(children) > 0) {
+            nextChildren.clear();
+            nextParents.clear();
+            for (int i = 0; i < children.size(); i++) {
+                for (T t : children.get(i)) {
+                    nextChildren.add(resourceTree.getChildren(t));
+                    parents.get(i).getChildren().add(new TreeModel<>(resourceTreeModeler.toResourceModel(t)));
+                }
+                nextParents.addAll(parents.get(i).getChildren());
+            }
+            parents.clear();
+            parents.addAll(nextParents);
+            children.clear();
+            children.addAll(nextChildren);
+        }
         //persist modelList via gson and write
+        if (jsonFile.exists()) {
+            try { //TODO replace with try with resource
+                FileWriter fileWriter = new FileWriter(jsonFile);
+                fileWriter.write(gson.toJson(modelList));
+                fileWriter.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            try { //TODO replace with try with resource
+                jsonFile.createNewFile();
+                FileWriter fileWriter = new FileWriter(jsonFile);
+                fileWriter.write(gson.toJson(modelList));
+                fileWriter.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private <L> int listOfListSize(List<List<L>> lists) {
+        int size = 0;
+        for (List<L> list : lists) {
+            size += list.size();
+        }
+        return size;
     }
 
     @Override

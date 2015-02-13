@@ -1,8 +1,9 @@
 package org.almibe.resourcetree.demo;
 
+import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 
-public class ResourcePersistence implements ResourceTreePersistence<Resource> {
+public class ResourcePersistence implements ResourceTreePersistence<Resource, Resource> {
     @Override
     public void move(Resource node, Resource parent) {
 
@@ -35,6 +36,11 @@ public class ResourcePersistence implements ResourceTreePersistence<Resource> {
 
     @Override
     public void clear() {
+
+    }
+
+    @Override
+    public void setModeler(ResourceTreeModeler<Resource, Resource> resourceTreeModeler) {
 
     }
 }

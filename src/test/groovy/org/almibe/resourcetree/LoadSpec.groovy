@@ -1,6 +1,5 @@
-package org.almibe.resourcetree
-
 import javafx.embed.swing.JFXPanel
+import org.almibe.resourcetree.TreeModel
 import org.almibe.resourcetree.demo.FolderResource
 import org.almibe.resourcetree.demo.Resource
 import org.almibe.resourcetree.impl.EqualityModeler
@@ -14,7 +13,7 @@ class LoadSpec extends Specification {
     JFXPanel fxPanel = new JFXPanel(); //this is a work around to init the JavaFX toolkit and is never used
 
     @Shared
-    TreeViewResourceTree<Resource> treeViewResourceTree
+    TreeViewResourceTree<Resource, Resource> treeViewResourceTree
 
     def setupSpec() {
         treeViewResourceTree = new TreeViewResourceTree<>()
