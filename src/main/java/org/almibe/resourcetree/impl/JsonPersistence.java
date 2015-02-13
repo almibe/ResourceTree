@@ -6,7 +6,6 @@ import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
-import sun.reflect.generics.tree.Tree;
 
 import java.io.File;
 import java.io.FileReader;
