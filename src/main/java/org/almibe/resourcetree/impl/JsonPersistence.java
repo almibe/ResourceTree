@@ -85,7 +85,7 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
                 children.addAll(nextChildren);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex);
         } finally {
             resourceTree.setTreePersistence(this);
         }

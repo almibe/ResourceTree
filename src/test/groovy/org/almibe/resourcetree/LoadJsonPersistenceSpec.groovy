@@ -30,68 +30,76 @@ public class LoadJsonPersistenceSpec extends Specification {
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
     }
 
-    def 'add nested nodes'() {
-        when:
-        String test = "Test";
-        treeViewResourceTree.add(test)
-        treeViewResourceTree.add("Test2")
-        treeViewResourceTree.add("ChildTest", test)
+//    def 'add nested nodes'() {
+//        when:
+//        String test = "Test";
+//        treeViewResourceTree.add(test)
+//        treeViewResourceTree.add("Test2")
+//        treeViewResourceTree.add("ChildTest", test)
+//
+//        Reader reader = new FileReader(jsonFile);
+//        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+//        reader = new FileReader(jsonFile);
+//        println(reader.text)
+//        reader.close();
+//
+//        then:
+//        treeViewResourceTree.rootItems.size() == 2
+//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 1
+//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 0
+//        resources.size() == 2
+//        resources.get(0).children.size() == 1
+//        resources.get(1).children.size() == 0
+//    }
 
-        Reader reader = new FileReader(jsonFile);
-        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
-        reader = new FileReader(jsonFile);
-        println(reader.text)
-        reader.close();
-
-        then:
-        treeViewResourceTree.rootItems.size() == 2
-        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 1
-        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 0
-        resources.size() == 2
-        resources.get(0).children.size() == 1
-        resources.get(1).children.size() == 0
-    }
-
-    def 'load non existent file'() {
-
-    }
-
-    def 'load json file with empty list'() {
+    def 'loading a non existent file should throw an error'() {
         given:
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+        File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
+        JsonPersistence<String, String> persistence = new JsonPersistence<>(nonExistentFile, treeViewResourceTree)
 
         when:
-
+        treeViewResourceTree.setTreePersistence(persistence)
         treeViewResourceTree.load()
+
         then:
-        thrown(IllegalArgumentException)
+        thrown(Exception)
     }
 
-    def 'load a single resource'() {
-        given:
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-
-        when:
-        treeViewResourceTree.load()
-        then:
-        treeViewResourceTree.getRootItems().size() == 1
-    }
-
-    def 'load a tree with one level under root'() {
-        given:
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-
-        when:
-        treeViewResourceTree.load()
-        then:
-        treeViewResourceTree.getRootItems() == 2
-        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
-    }
-
+//    def 'load json file with empty list'() {
+//        given:
+//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+//
+//        when:
+//
+//        treeViewResourceTree.load()
+//        then:
+//        thrown(IllegalArgumentException)
+//    }
+//
+//    def 'load a single resource'() {
+//        given:
+//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+//
+//        when:
+//        treeViewResourceTree.load()
+//        then:
+//        treeViewResourceTree.getRootItems().size() == 1
+//    }
+//
+//    def 'load a tree with one level under root'() {
+//        given:
+//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+//
+//        when:
+//        treeViewResourceTree.load()
+//        then:
+//        treeViewResourceTree.getRootItems() == 2
+//        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
+//    }
 }
