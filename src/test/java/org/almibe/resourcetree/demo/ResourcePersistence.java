@@ -1,10 +1,6 @@
 package org.almibe.resourcetree.demo;
 
-import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
-import org.almibe.resourcetree.TreeModel;
-
-import java.util.List;
 
 public class ResourcePersistence implements ResourceTreePersistence<Resource> {
     @Override
