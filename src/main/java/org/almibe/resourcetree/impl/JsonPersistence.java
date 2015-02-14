@@ -11,8 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
     private final Gson gson = new Gson();
@@ -57,32 +56,26 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
             List<TreeModel<M>> rootModels = gson.fromJson(reader, new TypeToken<List<TreeModel<M>>>() {}.getType());
             reader.close();
 
-            List<T> parents = new ArrayList<>();
-            List<T> nextParents = new ArrayList<>();
-            List<List<TreeModel<M>>> children = new ArrayList<>();
-            List<List<TreeModel<M>>> nextChildren = new ArrayList<>();
+            Map<T, List<TreeModel<M>>> parentMap = new HashMap<>();
+            Map<T, List<TreeModel<M>>> nextParentMap = new HashMap<>();
 
             for (TreeModel<M> treeModel : rootModels) {
-                resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()));
-                children.add(treeModel.getChildren());
+                T parent = resourceTreeModeler.toResource(treeModel.getNode());
+                resourceTree.add(parent);
+                parentMap.put(parent, treeModel.getChildren());
             }
 
-            parents.addAll(resourceTree.getRootItems());
-
-            while (listOfListSize(children) > 0) {
-                nextChildren.clear();
-                nextParents.clear();
-                for (int i = 0; i < children.size(); i++) {
-                    for (TreeModel<M> treeModel : children.get(i)) {
-                        nextChildren.add(treeModel.getChildren());
-                        resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()), parents.get(i));
+            while (listOfListSize(parentMap.values()) > 0) {
+                nextParentMap.clear();
+                for (T parent : parentMap.keySet()) {
+                    for (TreeModel<M> treeModel : parentMap.get(parent)) {
+                        T newParent = resourceTreeModeler.toResource(treeModel.getNode());
+                        nextParentMap.put(parent, treeModel.getChildren());
+                        resourceTree.add(newParent, parent);
                     }
-                    nextParents.addAll(resourceTree.getChildren(parents.get(i)));
                 }
-                parents.clear();
-                parents.addAll(nextParents);
-                children.clear();
-                children.addAll(nextChildren);
+                parentMap.clear();
+                parentMap.putAll(nextParentMap);
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -143,7 +136,7 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
         }
     }
 
-    private <L> int listOfListSize(List<List<L>> lists) {
+    private <L> int listOfListSize(Collection<List<L>> lists) {
         int size = 0;
         for (List<L> list : lists) {
             size += list.size();
