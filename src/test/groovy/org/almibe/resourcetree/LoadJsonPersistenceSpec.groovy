@@ -1,7 +1,6 @@
 package org.almibe.resourcetree
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.impl.EqualityModeler
 import org.almibe.resourcetree.impl.JsonPersistence
@@ -34,9 +33,9 @@ public class LoadJsonPersistenceSpec extends Specification {
         given:
         File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
         JsonPersistence<String, String> persistence = new JsonPersistence<>(nonExistentFile, treeViewResourceTree)
+        treeViewResourceTree.setTreePersistence(persistence)
 
         when:
-        treeViewResourceTree.setTreePersistence(persistence)
         treeViewResourceTree.load()
 
         then:
@@ -66,6 +65,7 @@ public class LoadJsonPersistenceSpec extends Specification {
 
         when:
         treeViewResourceTree.load()
+
         then:
         treeViewResourceTree.getRootItems().size() == 1
     }
@@ -79,9 +79,28 @@ public class LoadJsonPersistenceSpec extends Specification {
 
         when:
         treeViewResourceTree.load()
+
         then:
         treeViewResourceTree.getRootItems().size() == 2
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[1]).size() == 0
+    }
+
+    def 'load tree with out of order data'() {
+        given:
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNestedOutOfOrder.json").toURI())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+
+        when:
+        treeViewResourceTree.load()
+
+        then:
+        treeViewResourceTree.getRootItems().size() == 2
+        treeViewResourceTree.getRootItems().get(0) == 'ATest'
+        treeViewResourceTree.getRootItems().get(1) == 'BTest'
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 0
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[1]).size() == 2
     }
 }
