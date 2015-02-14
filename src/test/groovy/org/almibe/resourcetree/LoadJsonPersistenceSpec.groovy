@@ -30,28 +30,6 @@ public class LoadJsonPersistenceSpec extends Specification {
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
     }
 
-//    def 'add nested nodes'() {
-//        when:
-//        String test = "Test";
-//        treeViewResourceTree.add(test)
-//        treeViewResourceTree.add("Test2")
-//        treeViewResourceTree.add("ChildTest", test)
-//
-//        Reader reader = new FileReader(jsonFile);
-//        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
-//        reader = new FileReader(jsonFile);
-//        println(reader.text)
-//        reader.close();
-//
-//        then:
-//        treeViewResourceTree.rootItems.size() == 2
-//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(0)).size() == 1
-//        treeViewResourceTree.getChildren(treeViewResourceTree.rootItems.get(1)).size() == 0
-//        resources.size() == 2
-//        resources.get(0).children.size() == 1
-//        resources.get(1).children.size() == 0
-//    }
-
     def 'loading a non existent file should throw an error'() {
         given:
         File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
@@ -102,7 +80,8 @@ public class LoadJsonPersistenceSpec extends Specification {
         when:
         treeViewResourceTree.load()
         then:
-        treeViewResourceTree.getRootItems() == 2
+        treeViewResourceTree.getRootItems().size() == 2
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[1]).size() == 0
     }
 }

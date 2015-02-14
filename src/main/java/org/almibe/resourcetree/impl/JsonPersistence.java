@@ -59,23 +59,23 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
 
             List<T> parents = new ArrayList<>();
             List<T> nextParents = new ArrayList<>();
-            List<TreeModel<M>> children = new ArrayList<>();
-            List<TreeModel<M>> nextChildren = new ArrayList<>();
+            List<List<TreeModel<M>>> children = new ArrayList<>();
+            List<List<TreeModel<M>>> nextChildren = new ArrayList<>();
 
             for (TreeModel<M> treeModel : rootModels) {
                 resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()));
-                children.add(treeModel);
+                children.add(treeModel.getChildren());
             }
 
             parents.addAll(resourceTree.getRootItems());
 
-            while (listOfListSizeModel(children) > 0) {
+            while (listOfListSize(children) > 0) {
                 nextChildren.clear();
                 nextParents.clear();
                 for (int i = 0; i < children.size(); i++) {
-                    for (TreeModel<M> treeModel : children) {
-                        nextChildren.addAll(treeModel.getChildren());
-                        resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()));
+                    for (TreeModel<M> treeModel : children.get(i)) {
+                        nextChildren.add(treeModel.getChildren());
+                        resourceTree.add(resourceTreeModeler.toResource(treeModel.getNode()), parents.get(i));
                     }
                     nextParents.addAll(resourceTree.getChildren(parents.get(i)));
                 }
@@ -150,15 +150,6 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
         }
         return size;
     }
-
-    private <L> int listOfListSizeModel(List<TreeModel<L>> lists) {
-        int size = 0;
-        for (TreeModel<L> list : lists) {
-            size += list.getChildren().size();
-        }
-        return size;
-    }
-
 
     @Override
     public void setModeler(ResourceTreeModeler<T, M> resourceTreeModeler) {
