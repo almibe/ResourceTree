@@ -67,7 +67,7 @@ public class LoadJsonPersistenceSpec extends Specification {
 
     def 'load json file with empty list'() {
         given:
-        File jsonFile = new File(LoadJsonPersistenceSpec.class.getResourceAsStream("LoadTestEmpty.json"))
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestEmpty.json").toURI())
         resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
         resourceTreePersistence.setModeler(new EqualityModeler<String>())
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
