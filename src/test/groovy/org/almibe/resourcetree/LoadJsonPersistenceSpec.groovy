@@ -78,29 +78,31 @@ public class LoadJsonPersistenceSpec extends Specification {
         then:
         treeViewResourceTree.getRootItems().size() == 0
     }
-//
-//    def 'load a single resource'() {
-//        given:
-//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-//
-//        when:
-//        treeViewResourceTree.load()
-//        then:
-//        treeViewResourceTree.getRootItems().size() == 1
-//    }
-//
-//    def 'load a tree with one level under root'() {
-//        given:
-//        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-//        resourceTreePersistence.setModeler(new EqualityModeler<String>())
-//        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-//
-//        when:
-//        treeViewResourceTree.load()
-//        then:
-//        treeViewResourceTree.getRootItems() == 2
-//        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
-//    }
+
+    def 'load a single resource'() {
+        given:
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestSimple.json").toURI())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+
+        when:
+        treeViewResourceTree.load()
+        then:
+        treeViewResourceTree.getRootItems().size() == 1
+    }
+
+    def 'load a tree with one level under root'() {
+        given:
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNested.json").toURI())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
+        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+
+        when:
+        treeViewResourceTree.load()
+        then:
+        treeViewResourceTree.getRootItems() == 2
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 1
+    }
 }
