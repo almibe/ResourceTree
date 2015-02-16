@@ -27,6 +27,9 @@ public class LoadJsonPersistenceSpec extends Specification {
     def setup() {
         treeViewResourceTree = new TreeViewResourceTree<>()
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
+        treeViewResourceTree.setItemNestingRule(Stub(NestingRule))
+        treeViewResourceTree.setItemDisplay(Stub(ResourceTreeItemDisplay))
+        treeViewResourceTree.setTreeEventHandler(Stub(ResourceTreeEventHandler))
     }
 
     def 'loading a non existent file should throw an error'() {

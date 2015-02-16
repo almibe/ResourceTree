@@ -226,7 +226,20 @@ public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
 
     @Override
     public void load() {
+        checkDependencies();
         this.treePersistence.load();
+    }
+
+    private void checkDependencies() {
+        List<Class> missingDependencies = new ArrayList<>();
+        if (itemNestingRule == null) { missingDependencies.add(NestingRule.class); }
+        if (itemComparator == null) { missingDependencies.add(Comparator.class); }
+        if (itemDisplay == null) { missingDependencies.add(ResourceTreeItemDisplay.class); }
+        if (treePersistence == null) { missingDependencies.add(ResourceTreePersistence.class); }
+        if (treeEventHandler == null) { missingDependencies.add(ResourceTreeEventHandler.class); }
+        if (missingDependencies.size() > 0) {
+            throw new RuntimeException(missingDependencies + " must be set");
+        }
     }
 
     @Override
