@@ -116,23 +116,10 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
             children.addAll(nextChildren);
         }
 
-        if (jsonFile.exists()) {
-            try { //TODO replace with try with resource
-                FileWriter fileWriter = new FileWriter(jsonFile);
-                fileWriter.write(gson.toJson(modelList));
-                fileWriter.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            try { //TODO replace with try with resource
-                jsonFile.createNewFile();
-                FileWriter fileWriter = new FileWriter(jsonFile);
-                fileWriter.write(gson.toJson(modelList));
-                fileWriter.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        try (FileWriter fileWriter = new FileWriter(jsonFile)) {
+            fileWriter.write(gson.toJson(modelList));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
     }
 
