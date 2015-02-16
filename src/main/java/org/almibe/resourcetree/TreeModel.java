@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeModel<T> {
-    private final T node;
-    private final List<TreeModel<T>> children;
+    private T node;
+    private List<TreeModel<T>> children;
+
+    private TreeModel() {}
 
     public TreeModel(T node) {
         this.node = node;
