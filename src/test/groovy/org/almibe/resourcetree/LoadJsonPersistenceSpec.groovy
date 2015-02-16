@@ -21,6 +21,9 @@ public class LoadJsonPersistenceSpec extends Specification {
     @Shared
     Gson gson = new Gson();
 
+    @Shared
+    ResourceTreeModeler<String, String> equalityModeler = new EqualityModeler<>();
+
     TreeViewResourceTree<String, String> treeViewResourceTree
     ResourceTreePersistence<String, String> resourceTreePersistence;
 
@@ -35,7 +38,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'loading a non existent file should throw an error'() {
         given:
         File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
-        JsonPersistence<String, String> persistence = new JsonPersistence<>(nonExistentFile, treeViewResourceTree)
+        JsonPersistence<String, String> persistence = new JsonPersistence<>(nonExistentFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(persistence)
 
         when:
@@ -48,8 +51,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load json file with empty list'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestEmpty.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
 
         when:
@@ -62,8 +64,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load a single resource'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestSimple.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
 
         when:
@@ -76,8 +77,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load a tree with one level under root'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNested.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
 
         when:
@@ -92,8 +92,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load tree with out of order data'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNestedOutOfOrder.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
 
         when:

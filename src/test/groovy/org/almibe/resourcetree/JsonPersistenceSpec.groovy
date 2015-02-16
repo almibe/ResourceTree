@@ -22,6 +22,9 @@ public class JsonPersistenceSpec extends Specification {
     @Shared
     Gson gson = new Gson();
 
+    @Shared
+    ResourceTreeModeler<String, String> equalityModeler = new EqualityModeler<>();
+
     TreeViewResourceTree<String, String> treeViewResourceTree
     ResourceTreePersistence<String, String> resourceTreePersistence;
 
@@ -30,8 +33,7 @@ public class JsonPersistenceSpec extends Specification {
     def setup() {
         jsonFile = temporaryFolder.newFile()
         treeViewResourceTree = new TreeViewResourceTree<>()
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree)
-        resourceTreePersistence.setModeler(new EqualityModeler<String>())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
     }

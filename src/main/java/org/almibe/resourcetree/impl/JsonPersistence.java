@@ -17,11 +17,12 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
     private final Gson gson = new Gson();
     private final File jsonFile;
     private final ResourceTree<T, M> resourceTree;
-    private ResourceTreeModeler<T, M> resourceTreeModeler;
+    private final ResourceTreeModeler<T, M> resourceTreeModeler;
 
-    public JsonPersistence(File jsonFile, ResourceTree<T, M> resourceTree) {
+    public JsonPersistence(File jsonFile, ResourceTree<T, M> resourceTree, ResourceTreeModeler<T, M> resourceTreeModeler) {
         this.jsonFile = jsonFile;
         this.resourceTree = resourceTree;
+        this.resourceTreeModeler = resourceTreeModeler;
     }
 
     @Override
@@ -129,10 +130,5 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
             size += list.size();
         }
         return size;
-    }
-
-    @Override
-    public void setModeler(ResourceTreeModeler<T, M> resourceTreeModeler) {
-        this.resourceTreeModeler = resourceTreeModeler;
     }
 }
