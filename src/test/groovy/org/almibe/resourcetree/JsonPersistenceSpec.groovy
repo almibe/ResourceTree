@@ -33,7 +33,7 @@ public class JsonPersistenceSpec extends Specification {
     def setup() {
         jsonFile = temporaryFolder.newFile()
         treeViewResourceTree = new TreeViewResourceTree<>()
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler, new TypeToken<List<TreeModel<String>>>(){}.getType())
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
     }

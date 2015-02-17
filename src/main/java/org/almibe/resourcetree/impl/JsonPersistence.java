@@ -1,7 +1,6 @@
 package org.almibe.resourcetree.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.ResourceTreeModeler;
 import org.almibe.resourcetree.ResourceTreePersistence;
@@ -11,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
@@ -18,11 +18,13 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
     private final File jsonFile;
     private final ResourceTree<T, M> resourceTree;
     private final ResourceTreeModeler<T, M> resourceTreeModeler;
+    private final Type type;
 
-    public JsonPersistence(File jsonFile, ResourceTree<T, M> resourceTree, ResourceTreeModeler<T, M> resourceTreeModeler) {
+    public JsonPersistence(File jsonFile, ResourceTree<T, M> resourceTree, ResourceTreeModeler<T, M> resourceTreeModeler, Type type) {
         this.jsonFile = jsonFile;
         this.resourceTree = resourceTree;
         this.resourceTreeModeler = resourceTreeModeler;
+        this.type = type;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
         }
         try (Reader reader = new FileReader(jsonFile)) {
             resourceTree.setTreePersistence(new NullPersistence()); //start with null persistence while loading
-            List<TreeModel<M>> rootModels = gson.fromJson(reader, new TypeToken<List<TreeModel<M>>>() {}.getType());
+            List<TreeModel<M>> rootModels = gson.fromJson(reader, type);
             reader.close();
 
             Map<T, List<TreeModel<M>>> parentMap = new HashMap<>();
