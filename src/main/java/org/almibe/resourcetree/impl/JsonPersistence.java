@@ -52,6 +52,9 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
 
     @Override
     public void load() {
+        if (!jsonFile.exists()) {
+            return;
+        }
         try (Reader reader = new FileReader(jsonFile)) {
             resourceTree.setTreePersistence(new NullPersistence()); //start with null persistence while loading
             List<TreeModel<M>> rootModels = gson.fromJson(reader, new TypeToken<List<TreeModel<M>>>() {}.getType());

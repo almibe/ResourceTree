@@ -35,7 +35,7 @@ public class LoadJsonPersistenceSpec extends Specification {
         treeViewResourceTree.setTreeEventHandler(Stub(ResourceTreeEventHandler))
     }
 
-    def 'loading a non existent file should throw an error'() {
+    def 'loading a non existent file should not throw an exception'() {
         given:
         File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
         JsonPersistence<String, String> persistence = new JsonPersistence<>(nonExistentFile, treeViewResourceTree, equalityModeler)
@@ -45,7 +45,7 @@ public class LoadJsonPersistenceSpec extends Specification {
         treeViewResourceTree.load()
 
         then:
-        thrown(Exception)
+        notThrown(Exception)
     }
 
     def 'load json file with empty list'() {
