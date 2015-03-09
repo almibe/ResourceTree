@@ -1,8 +1,10 @@
 package org.almibe.resourcetree;
 
-import javafx.scene.image.ImageView;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.Node;
 
 public interface ResourceTreeItemDisplay<T> {
-    String getName(T t);
-    ImageView getIcon(T t);
+    StringProperty getName(T t);
+    ObjectProperty<Node> getGraphic(T t);
 }

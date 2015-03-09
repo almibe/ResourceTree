@@ -353,10 +353,12 @@ public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
             super.updateItem(item, empty);
             this.item = item;
             if (item != null && itemDisplay != null) {
-                setText(itemDisplay.getName(item));
-                setGraphic(itemDisplay.getIcon(item));
+                textProperty().bind(itemDisplay.getName(item));
+                graphicProperty().bind(itemDisplay.getGraphic(item));
             } else {
+                textProperty().unbind();
                 setText(null);
+                graphicProperty().unbind();
                 setGraphic(null);
             }
         }
