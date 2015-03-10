@@ -111,4 +111,21 @@ public class LoadJsonPersistenceSpec extends Specification {
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[0]).size() == 0
         treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems()[1]).size() == 2
     }
+
+    def 'load deeply nested data'() {
+        given:
+        File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestDeeplyNested.json").toURI())
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler, type)
+        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
+
+        when:
+        treeViewResourceTree.load()
+
+        then:
+        treeViewResourceTree.getRootItems().size() == 1
+        treeViewResourceTree.getResources().size() == 8
+        treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems().get(0)).size() == 1
+        def child = treeViewResourceTree.getChildren(treeViewResourceTree.getRootItems().get(0)).get(0)
+        treeViewResourceTree.getChildren(child).size() == 1
+    }
 }
