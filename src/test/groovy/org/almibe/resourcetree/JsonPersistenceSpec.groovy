@@ -109,4 +109,28 @@ public class JsonPersistenceSpec extends Specification {
         treeViewResourceTree.rootItems.size() == 0
         resources.size() == 0
     }
+
+    def 'test deep nesting'() {
+        when:
+        String test = "Test";
+        String test2 = "Test2";
+        String test3 = "Test3";
+        String test4 = "Test4";
+        String test5 = "Test5";
+        treeViewResourceTree.add(test)
+        treeViewResourceTree.add(test2, test)
+        treeViewResourceTree.add(test3, test2)
+        treeViewResourceTree.add(test4, test3)
+        treeViewResourceTree.add(test5, test4)
+
+        Reader reader = new FileReader(jsonFile);
+        List<TreeModel<String>> resources = gson.fromJson(reader, new TypeToken<List<TreeModel<String>>>(){}.getType());
+        reader = new FileReader(jsonFile);
+        println(reader.text)
+        reader.close();
+
+        then:
+        treeViewResourceTree.rootItems.size() == 1
+        treeViewResourceTree.getResources().size() == 5
+    }
 }
