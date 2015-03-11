@@ -164,7 +164,7 @@ public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
     private void addOrderedDrop(TreeItem<T> target, TreeItem<T> child) {
         addOrdered(target,child);
         tree.getSelectionModel().select(child);
-        this.treePersistence.update(child.getValue());
+        this.treePersistence.update(child.getValue()); //TODO drop should call move not addOrderedDrop and then update persistence
     }
 
     @Override
