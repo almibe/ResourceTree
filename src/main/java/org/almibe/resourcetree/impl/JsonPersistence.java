@@ -76,7 +76,7 @@ public class JsonPersistence<T, M> implements ResourceTreePersistence<T, M> {
                 for (T parent : parentMap.keySet()) {
                     for (TreeModel<M> treeModel : parentMap.get(parent)) {
                         T newParent = resourceTreeModeler.toResource(treeModel.getNode());
-                        nextParentMap.put(parent, treeModel.getChildren());
+                        nextParentMap.put(newParent, treeModel.getChildren());
                         resourceTree.add(newParent, parent);
                     }
                 }
