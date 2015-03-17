@@ -222,6 +222,14 @@ public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
     @Override
     public void update(T node) {
         //TODO update display of the node in the tree and add checks
+        T parent = this.getParent(node);
+        TreeItem<T> parentItem = resourceToTreeItemMap.get(parent);
+        if (parentItem == null) {
+            parentItem = rootTreeItem;
+        }
+        TreeItem<T> nodeItem = resourceToTreeItemMap.get(node);
+        parentItem.getChildren().remove(nodeItem);
+        addOrdered(parentItem, nodeItem);
         this.treePersistence.update(node);
     }
 
