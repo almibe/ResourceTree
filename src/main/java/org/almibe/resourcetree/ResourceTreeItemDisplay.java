@@ -1,10 +1,10 @@
 package org.almibe.resourcetree;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.Node;
 
 public interface ResourceTreeItemDisplay<T> {
-    StringProperty getName(T t);
-    ObjectProperty<Node> getGraphic(T t);
+    ReadOnlyStringProperty getName(T t);
+    ReadOnlyObjectProperty<Node> getGraphic(T t);
 }
