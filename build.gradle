@@ -3,13 +3,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.dm.gradle:bundle:0.2'
+        classpath 'org.dm.gradle:gradle-bundle-plugin:0.8.2'
     }
 }
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'bundle'
+apply plugin: 'org.dm.bundle'
 apply plugin: 'maven'
 
 sourceCompatibility = '1.8'
@@ -37,7 +36,6 @@ dependencies {
 
 bundle {
     instruction 'Export-Package', 'org.almibe.resourcetree.*'
-    instruction 'Private-Package', '*;-split-package:=merge-first'
 }
 
 //work around for not being able to load test resources, see http://stackoverflow.com/questions/25513788/intellij-cant-find-classpath-test-resource
