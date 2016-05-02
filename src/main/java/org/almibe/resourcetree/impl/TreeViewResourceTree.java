@@ -22,14 +22,14 @@ import org.almibe.resourcetree.*;
 
 import java.util.*;
 
-public class TreeViewResourceTree<T, M> implements ResourceTree<T, M> {
+public class TreeViewResourceTree<T, M> implements ResourceTree<T> {
     private final TreeView<T> tree;
     private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
     private final ObservableList<T> resources = FXCollections.observableArrayList();
     private ResourceTreeItemDisplay<T> itemDisplay;
     private Comparator<T> itemComparator;
     private NestingRule<T> itemNestingRule;
-    private ResourceTreePersistence<T, M> treePersistence;
+    private ResourceTreePersistence<T> treePersistence;
     private ResourceTreeEventHandler<T> treeEventHandler;
     private final TreeItem<T> rootTreeItem;
 
