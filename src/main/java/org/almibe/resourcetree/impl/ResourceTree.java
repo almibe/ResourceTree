@@ -22,27 +22,30 @@ import org.almibe.resourcetree.*;
 
 import java.util.*;
 
-public class TreeViewResourceTree<T> implements ResourceTree<T> {
+public class ResourceTree<T> implements ResourceTreePersistence<T> {
     private final TreeView<T> tree;
     private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
     private final ObservableList<T> resources = FXCollections.observableArrayList();
-    private ResourceTreeItemDisplay<T> itemDisplay;
-    private Comparator<T> itemComparator;
-    private NestingRule<T> itemNestingRule;
-    private ResourceTreePersistence<T> treePersistence;
-    private ResourceTreeEventHandler<T> treeEventHandler;
+    private final ResourceTreeItemDisplay<T> itemDisplay;
+    private final Comparator<T> itemComparator;
+    private final NestingRule<T> itemNestingRule;
+    private final ResourceTreePersistence<T> treePersistence;
+    private final ResourceTreeEventHandler<T> treeEventHandler;
     private final TreeItem<T> rootTreeItem;
 
     //variables used for DnD
     private DraggableCell dragSource;
-    private Image cross = new Image(TreeViewResourceTree.class.getResourceAsStream("xb24.png"));
+    private Image cross = new Image(ResourceTree.class.getResourceAsStream("xb24.png"));
     private final String selectedStyle = "list-cell-selected";
 
-    public TreeViewResourceTree() {
-        this(new ArrayList<>());
-    }
-
-    public TreeViewResourceTree(List<T> root) {
+    public ResourceTree(List<T> root, NestingRule<T> nestingRule, ResourceTreeEventHandler<T> resourceTreeEventHandler,
+                        ResourceTreeItemDisplay<T> resourceTreeItemDisplay, ResourceTreePersistence<T> resourceTreePersistence,
+                        Comparator<T> comparator) {
+        this.itemNestingRule = nestingRule;
+        this.treeEventHandler = resourceTreeEventHandler;
+        this.itemDisplay = resourceTreeItemDisplay;
+        this.treePersistence = resourceTreePersistence;
+        this.itemComparator = comparator;
         //make root null since it is never shown
         this.rootTreeItem =  new TreeItem<>();
         this.tree = new TreeView<>(rootTreeItem);
@@ -75,13 +78,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         });
     }
 
-    @Override
     public synchronized void clearSelection() {
         this.tree.getFocusModel().focus(-1);
         this.tree.getSelectionModel().select(-1);
     }
 
-    @Override
     public List<T> getRootItems() {
         List<T> returnList = new ArrayList<>();
         for (TreeItem<T> treeItem : tree.getRoot().getChildren()) {
@@ -90,13 +91,11 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         return returnList;
     }
 
-    @Override
     public T getParent(T t) {
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
         return treeItem.getParent().getValue(); //TODO add checking
     }
 
-    @Override
     public List<T> getChildren(T t) {
         List<T> children = new ArrayList<>();
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
@@ -109,7 +108,6 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         }
     }
 
-    @Override
     public ReadOnlyListProperty<T> getResources() {
         return new ReadOnlyListWrapper(resources); //TODO this needs testing
     }
@@ -167,37 +165,10 @@ public class TreeViewResourceTree<T> implements ResourceTree<T> {
         this.treePersistence.update(child.getValue()); //TODO drop should call move not addOrderedDrop and then update persistence
     }
 
-    @Override
     public Parent getWidget() {
         return this.tree;
     }
 
-    @Override
-    public void setItemNestingRule(NestingRule<T> nestingRule) {
-        this.itemNestingRule = nestingRule;
-    }
-
-    @Override
-    public void setItemComparator(Comparator<T> comparator) {
-        this.itemComparator = comparator;
-    }
-
-    @Override
-    public void setItemDisplay(ResourceTreeItemDisplay display) {
-        this.itemDisplay = display;
-    }
-
-    @Override
-    public void setTreePersistence(ResourceTreePersistence treePersistence) {
-        this.treePersistence = treePersistence;
-    }
-
-    @Override
-    public void setTreeEventHandler(ResourceTreeEventHandler eventHandler) {
-        this.treeEventHandler = eventHandler;
-    }
-
-    @Override
     public synchronized void move(T node, T parent) {
         //TODO add checks
         TreeItem<T> nodeTreeItem = resourceToTreeItemMap.get(node);

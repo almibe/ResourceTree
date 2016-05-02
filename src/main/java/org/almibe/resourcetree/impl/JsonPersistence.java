@@ -1,7 +1,6 @@
 package org.almibe.resourcetree.impl;
 
 import com.google.gson.Gson;
-import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.ResourceTreePersistence;
 import org.almibe.resourcetree.TreeModel;
 
@@ -17,6 +16,7 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     private final File jsonFile;
     private final ResourceTree<T> resourceTree;
     private final Type type;
+    private boolean loading = false;
 
     public JsonPersistence(File jsonFile, ResourceTree<T> resourceTree, Type type) {
         this.jsonFile = jsonFile;
@@ -26,27 +26,27 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
 
     @Override
     public void move(T node, T parent) {
-        writeJsonFile();
+        if (!loading) writeJsonFile();
     }
 
     @Override
     public void add(T node) {
-        writeJsonFile();
+        if (!loading) writeJsonFile();
     }
 
     @Override
     public void add(T node, T parent) {
-        writeJsonFile();
+        if (!loading) writeJsonFile();
     }
 
     @Override
     public void remove(T node) {
-        writeJsonFile();
+        if (!loading) writeJsonFile();
     }
 
     @Override
     public void update(T node) {
-        writeJsonFile();
+        if (!loading) writeJsonFile();
     }
 
     @Override
@@ -54,8 +54,8 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
         if (!jsonFile.exists()) {
             return;
         }
+        loading = true;
         try (Reader reader = new FileReader(jsonFile)) {
-            resourceTree.setTreePersistence(new NullPersistence()); //start with null persistence while loading
             List<TreeModel<T>> rootModels = gson.fromJson(reader, type);
             reader.close();
 
@@ -81,7 +81,7 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         } finally {
-            resourceTree.setTreePersistence(this);
+            loading = false;
         }
     }
 
@@ -91,6 +91,7 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     }
 
     private void writeJsonFile() {
+        if (loading) return;
         List<TreeModel<T>> modelList = new ArrayList<>();
         List<TreeModel<T>> parents = new ArrayList<>();
         List<TreeModel<T>> nextParents = new ArrayList<>();

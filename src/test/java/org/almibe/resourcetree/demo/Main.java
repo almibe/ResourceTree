@@ -6,11 +6,11 @@ import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.impl.NullPersistence;
-import org.almibe.resourcetree.impl.TreeViewResourceTree;
+import org.almibe.resourcetree.impl.ResourceTree;
 
 public class Main extends Application {
 
-    ResourceTree<Resource> resourceTree = new TreeViewResourceTree<>();
+    ResourceTree<Resource> resourceTree = new ResourceTree<>();
     
     @Override
     public void start(Stage primaryStage) throws Exception {

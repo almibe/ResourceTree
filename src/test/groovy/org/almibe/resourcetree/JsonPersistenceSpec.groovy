@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.impl.JsonPersistence
-import org.almibe.resourcetree.impl.TreeViewResourceTree
+import org.almibe.resourcetree.impl.ResourceTree
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Shared
@@ -21,14 +21,14 @@ public class JsonPersistenceSpec extends Specification {
     @Shared
     Gson gson = new Gson();
 
-    TreeViewResourceTree<String> treeViewResourceTree
+    ResourceTree<String> treeViewResourceTree
     ResourceTreePersistence<String> resourceTreePersistence;
 
     File jsonFile
 
     def setup() {
         jsonFile = temporaryFolder.newFile()
-        treeViewResourceTree = new TreeViewResourceTree<>()
+        treeViewResourceTree = new ResourceTree<>()
         resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler, new TypeToken<List<TreeModel<String>>>(){}.getType())
         treeViewResourceTree.setTreePersistence(resourceTreePersistence)
         treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
