@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import java.util.Comparator;
 import java.util.List;
 
-public interface ResourceTree<T> extends ResourceTreeMutation<T> {
+public interface ResourceTree<T> extends ResourceTreePersistence<T> {
     Parent getWidget();
     void setItemNestingRule(NestingRule<T> nestingRule);
     void setItemComparator(Comparator<T> comparator);
