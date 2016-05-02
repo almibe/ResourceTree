@@ -10,7 +10,7 @@ import org.almibe.resourcetree.impl.TreeViewResourceTree;
 
 public class Main extends Application {
 
-    ResourceTree<Resource, Resource> resourceTree = new TreeViewResourceTree<>();
+    ResourceTree<Resource> resourceTree = new TreeViewResourceTree<>();
     
     @Override
     public void start(Stage primaryStage) throws Exception {

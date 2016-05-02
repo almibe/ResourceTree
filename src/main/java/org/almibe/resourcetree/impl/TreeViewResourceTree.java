@@ -22,7 +22,7 @@ import org.almibe.resourcetree.*;
 
 import java.util.*;
 
-public class TreeViewResourceTree<T, M> implements ResourceTree<T> {
+public class TreeViewResourceTree<T> implements ResourceTree<T> {
     private final TreeView<T> tree;
     private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
     private final ObservableList<T> resources = FXCollections.observableArrayList();

@@ -3,7 +3,6 @@ package org.almibe.resourcetree
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
-import org.almibe.resourcetree.impl.EqualityModeler
 import org.almibe.resourcetree.impl.JsonPersistence
 import org.almibe.resourcetree.impl.TreeViewResourceTree
 import org.junit.ClassRule
@@ -25,13 +24,10 @@ public class LoadJsonPersistenceSpec extends Specification {
     Gson gson = new Gson();
 
     @Shared
-    ResourceTreeModeler<String, String> equalityModeler = new EqualityModeler<>();
-
-    @Shared
     Type type = new TypeToken<List<TreeModel<String>>>(){}.getType();
 
-    TreeViewResourceTree<String, String> treeViewResourceTree
-    ResourceTreePersistence<String, String> resourceTreePersistence;
+    TreeViewResourceTree<String> treeViewResourceTree
+    ResourceTreePersistence<String> resourceTreePersistence;
 
     def setup() {
         treeViewResourceTree = new TreeViewResourceTree<>()

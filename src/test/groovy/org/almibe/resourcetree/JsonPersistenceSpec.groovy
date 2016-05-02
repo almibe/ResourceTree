@@ -3,7 +3,6 @@ package org.almibe.resourcetree
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
-import org.almibe.resourcetree.impl.EqualityModeler
 import org.almibe.resourcetree.impl.JsonPersistence
 import org.almibe.resourcetree.impl.TreeViewResourceTree
 import org.junit.ClassRule
@@ -22,11 +21,8 @@ public class JsonPersistenceSpec extends Specification {
     @Shared
     Gson gson = new Gson();
 
-    @Shared
-    ResourceTreeModeler<String, String> equalityModeler = new EqualityModeler<>();
-
-    TreeViewResourceTree<String, String> treeViewResourceTree
-    ResourceTreePersistence<String, String> resourceTreePersistence;
+    TreeViewResourceTree<String> treeViewResourceTree
+    ResourceTreePersistence<String> resourceTreePersistence;
 
     File jsonFile
 

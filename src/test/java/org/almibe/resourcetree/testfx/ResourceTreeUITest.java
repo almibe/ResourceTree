@@ -2,11 +2,9 @@ package org.almibe.resourcetree.testfx;
 
 import javafx.scene.Parent;
 import org.almibe.resourcetree.impl.TreeViewResourceTree;
-import org.junit.Test;
-import org.loadui.testfx.GuiTest;
 
 public class ResourceTreeUITest {//extends GuiTest {
-    private final TreeViewResourceTree<String, String> resourceTree =  new TreeViewResourceTree<>();
+    private final TreeViewResourceTree<String> resourceTree =  new TreeViewResourceTree<>();
 
     public ResourceTreeUITest() {
         resourceTree.getWidget().setId("resourceTree");
