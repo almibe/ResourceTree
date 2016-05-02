@@ -27,10 +27,8 @@ public class JsonPersistenceSpec extends Specification {
 
     def setup() {
         jsonFile = temporaryFolder.newFile()
-        treeViewResourceTree = new ResourceTree<>()
-        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, equalityModeler, new TypeToken<List<TreeModel<String>>>(){}.getType())
-        treeViewResourceTree.setTreePersistence(resourceTreePersistence)
-        treeViewResourceTree.setItemComparator(String.CASE_INSENSITIVE_ORDER)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, treeViewResourceTree, new TypeToken<List<TreeModel<String>>>(){}.getType())
+        treeViewResourceTree = new ResourceTree<>(new ArrayList<String>(), null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
     }
 
     def 'adding a single node'() {
