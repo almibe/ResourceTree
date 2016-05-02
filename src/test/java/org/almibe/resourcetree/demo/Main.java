@@ -7,12 +7,10 @@ import javafx.stage.Stage;
 import org.almibe.resourcetree.NullPersistence;
 import org.almibe.resourcetree.ResourceTree;
 
-import java.util.ArrayList;
-
 public class Main extends Application {
 
-    ResourceTree<Resource> resourceTree = new ResourceTree<>(new ArrayList<>(), new ResourceNestingRule(),
-        new ResourceEventHandler(), new ResourceItemDisplay(), new NullPersistence<>(), new ResourceComparator());
+    ResourceTree<Resource> resourceTree = new ResourceTree<>(new ResourceNestingRule(), new ResourceEventHandler(),
+        new ResourceItemDisplay(), new NullPersistence<>(), new ResourceComparator());
     
     @Override
     public void start(Stage primaryStage) throws Exception {

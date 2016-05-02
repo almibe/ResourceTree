@@ -41,7 +41,7 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
     private Image cross = new Image(ResourceTree.class.getResourceAsStream("xb24.png"));
     private final String selectedStyle = "list-cell-selected";
 
-    public ResourceTree(List<T> root, NestingRule<T> nestingRule, ResourceTreeEventHandler<T> resourceTreeEventHandler,
+    public ResourceTree(NestingRule<T> nestingRule, ResourceTreeEventHandler<T> resourceTreeEventHandler,
                         ResourceTreeItemDisplay<T> resourceTreeItemDisplay, ResourceTreePersistence<T> resourceTreePersistence,
                         Comparator<T> comparator) {
         this.itemNestingRule = nestingRule;
@@ -53,11 +53,6 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
         this.rootTreeItem =  new TreeItem<>();
         this.tree = new TreeView<>(rootTreeItem);
         tree.showRootProperty().set(false);
-        for(T currentNode : root) {
-            TreeItem<T> currentTreeItem =  new TreeItem<>(null);
-            rootTreeItem.getChildren().add(currentTreeItem);
-            resourceToTreeItemMap.put(currentNode, currentTreeItem);
-        }
         tree.setCellFactory((TreeView<T> tree) -> new DraggableCell(tree));
         String style = this.getClass().getResource("treeview.css").toExternalForm();
         tree.getStylesheets().add(style);
