@@ -1,4 +1,4 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.api;
 
 public interface ResourceTreePersistence<T> {
     void move(T node, T parent);

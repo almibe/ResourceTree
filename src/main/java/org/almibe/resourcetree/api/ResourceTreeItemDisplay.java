@@ -1,4 +1,4 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.api;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;

@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
-import org.almibe.resourcetree.ResourceTreeItemDisplay;
+import org.almibe.resourcetree.api.ResourceTreeItemDisplay;
 
 
 public class ResourceItemDisplay implements ResourceTreeItemDisplay<Resource> {

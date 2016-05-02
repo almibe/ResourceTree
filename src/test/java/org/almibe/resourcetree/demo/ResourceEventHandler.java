@@ -1,7 +1,7 @@
 package org.almibe.resourcetree.demo;
 
 import javafx.scene.control.MenuItem;
-import org.almibe.resourcetree.ResourceTreeEventHandler;
+import org.almibe.resourcetree.api.ResourceTreeEventHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;

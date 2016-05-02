@@ -1,4 +1,4 @@
-package org.almibe.resourcetree;
+package org.almibe.resourcetree.api;
 
 import javafx.scene.control.MenuItem;
 

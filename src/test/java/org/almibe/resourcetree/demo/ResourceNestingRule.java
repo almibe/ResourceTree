@@ -1,6 +1,6 @@
 package org.almibe.resourcetree.demo;
 
-import org.almibe.resourcetree.NestingRule;
+import org.almibe.resourcetree.api.NestingRule;
 
 public class ResourceNestingRule implements NestingRule<Resource> {
     @Override

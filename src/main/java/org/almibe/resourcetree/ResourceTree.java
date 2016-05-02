@@ -18,6 +18,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import org.almibe.resourcetree.api.NestingRule;
+import org.almibe.resourcetree.api.ResourceTreeEventHandler;
+import org.almibe.resourcetree.api.ResourceTreeItemDisplay;
+import org.almibe.resourcetree.api.ResourceTreePersistence;
 
 import java.util.*;
 
