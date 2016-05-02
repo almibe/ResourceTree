@@ -4,24 +4,21 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
-import org.almibe.resourcetree.ResourceTree;
 import org.almibe.resourcetree.impl.NullPersistence;
 import org.almibe.resourcetree.impl.ResourceTree;
 
+import java.util.ArrayList;
+
 public class Main extends Application {
 
-    ResourceTree<Resource> resourceTree = new ResourceTree<>();
+    ResourceTree<Resource> resourceTree = new ResourceTree<>(new ArrayList<>(), new ResourceNestingRule(),
+        new ResourceEventHandler(), new ResourceItemDisplay(), new NullPersistence<>(), new ResourceComparator());
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         SplitPane sp = new SplitPane();
         FolderResource folder = new FolderResource("Scripts");
 
-        resourceTree.setItemNestingRule(new ResourceNestingRule());
-        resourceTree.setItemComparator(new ResourceComparator());
-        resourceTree.setItemDisplay(new ResourceItemDisplay());
-        resourceTree.setTreePersistence(new NullPersistence<>());
-        resourceTree.setTreeEventHandler(new ResourceEventHandler());
         resourceTree.add(folder);
         resourceTree.add(new FolderResource("Docs"));
         resourceTree.add(new FileResource("May Report"));
