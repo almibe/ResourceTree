@@ -3,8 +3,6 @@ package org.almibe.resourcetree
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javafx.embed.swing.JFXPanel
-import org.almibe.resourcetree.impl.JsonPersistence
-import org.almibe.resourcetree.impl.ResourceTree
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Shared

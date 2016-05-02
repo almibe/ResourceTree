@@ -1,4 +1,4 @@
-package org.almibe.resourcetree.impl;
+package org.almibe.resourcetree;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -18,7 +18,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import org.almibe.resourcetree.*;
 
 import java.util.*;
 

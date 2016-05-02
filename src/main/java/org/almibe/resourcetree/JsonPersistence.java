@@ -1,8 +1,6 @@
-package org.almibe.resourcetree.impl;
+package org.almibe.resourcetree;
 
 import com.google.gson.Gson;
-import org.almibe.resourcetree.ResourceTreePersistence;
-import org.almibe.resourcetree.TreeModel;
 
 import java.io.File;
 import java.io.FileReader;

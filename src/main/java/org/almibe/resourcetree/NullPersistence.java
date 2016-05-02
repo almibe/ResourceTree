@@ -1,6 +1,4 @@
-package org.almibe.resourcetree.impl;
-
-import org.almibe.resourcetree.ResourceTreePersistence;
+package org.almibe.resourcetree;
 
 public class NullPersistence<T, M> implements ResourceTreePersistence<T> {
     @Override public void move(T node, T parent) {}

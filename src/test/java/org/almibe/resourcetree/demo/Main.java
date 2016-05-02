@@ -4,8 +4,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
-import org.almibe.resourcetree.impl.NullPersistence;
-import org.almibe.resourcetree.impl.ResourceTree;
+import org.almibe.resourcetree.NullPersistence;
+import org.almibe.resourcetree.ResourceTree;
 
 import java.util.ArrayList;
 
