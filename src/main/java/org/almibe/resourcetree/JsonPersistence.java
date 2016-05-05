@@ -1,6 +1,8 @@
 package org.almibe.resourcetree;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
 import org.almibe.resourcetree.api.ResourceTreePersistence;
 
 import java.io.File;
@@ -11,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class JsonPersistence<T> implements ResourceTreePersistence<T> {
-    private final Gson gson = new Gson();
+    private final Gson gson;
     private final File jsonFile;
     private final Type type;
     private boolean loading = false;
@@ -19,6 +21,15 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     public JsonPersistence(File jsonFile, Type type) {
         this.jsonFile = jsonFile;
         this.type = type;
+        this.gson = new Gson();
+    }
+
+    public JsonPersistence(File jsonFile, Type type, TypeAdapter<T> typeAdapter) {
+        this.jsonFile = jsonFile;
+        this.type = type;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(type, typeAdapter);
+        this.gson = gsonBuilder.create();
     }
 
     @Override

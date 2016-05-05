@@ -1,8 +1,15 @@
 package org.almibe.resourcetree
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.embed.swing.JFXPanel
+import jdk.nashorn.internal.ir.annotations.Immutable
 import org.almibe.resourcetree.api.ResourceTreePersistence
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
@@ -125,5 +132,64 @@ public class JsonPersistenceSpec extends Specification {
         then:
         treeViewResourceTree.rootItems.size() == 1
         treeViewResourceTree.getResources().size() == 5
+    }
+
+    def 'test JsonPersistence with TypeAdapter'() {
+        given:
+        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, AdapterTestCase.class, new AdapterTestCaseAdapter())
+        ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
+        GsonBuilder gsonBuilder = new GsonBuilder()
+        gsonBuilder.registerTypeAdapter(AdapterTestCase.class, new AdapterTestCaseAdapter())
+        Gson gson = gsonBuilder.create()
+
+        when:
+        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: new SimpleStringProperty("Alex"), value: 42.0f)
+        resourceTree.add(initialValue)
+
+        Reader reader = new FileReader(jsonFile);
+        String initialValueJson = reader.text
+        println(initialValueJson)
+        reader.close();
+        List<TreeModel<AdapterTestCase>> newValue = gson.fromJson(initialValueJson, AdapterTestCase.class)
+
+        then:
+        initialValue.value == newValue.get(0).node.value
+        initialValue.nameProperty.value == newValue.get(0).node.nameProperty.value
+    }
+
+    @Immutable
+    class AdapterTestCase {
+        StringProperty nameProperty
+        Float value
+    }
+
+    class AdapterTestCaseAdapter extends TypeAdapter<AdapterTestCase> {
+        @Override
+        AdapterTestCase read(final JsonReader jsonReader) {
+            def name
+            def value
+
+            jsonReader.beginObject()
+            while (jsonReader.hasNext()) {
+                switch (jsonReader.nextName()) {
+                    case "name":
+                        name = new SimpleStringProperty(jsonReader.nextString())
+                        break
+                    case "value":
+                        value = (float)jsonReader.nextDouble()
+                        break
+                }
+            }
+            jsonReader.endObject()
+            return new AdapterTestCase(nameProperty:  name, value: value)
+        }
+
+        @Override
+        void write(final JsonWriter jsonWriter, AdapterTestCase adapterTestCase) {
+            jsonWriter.beginObject()
+            jsonWriter.name("name").value(adapterTestCase.nameProperty.value)
+            jsonWriter.name("value").value(adapterTestCase.value)
+            jsonWriter.endObject()
+        }
     }
 }
