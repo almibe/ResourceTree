@@ -25,7 +25,7 @@ import org.almibe.resourcetree.api.ResourceTreePersistence;
 
 import java.util.*;
 
-public class ResourceTree<T> implements ResourceTreePersistence<T> {
+public class ResourceTree<T> {
     private final TreeView<T> tree;
     private final ObservableMap<T, TreeItem<T>> resourceToTreeItemMap = FXCollections.observableHashMap();
     private final ObservableList<T> resources = FXCollections.observableArrayList();
@@ -115,14 +115,13 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
      * 
      * @param resource The resource to be added to the tree
      */
-    @Override
     public synchronized void add(T resource) {
         //TODO add checks
         //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(this.tree.getRoot(), treeItem);
-        this.treePersistence.add(resource);
+        treePersistence.save(this);
     }
     
     /**
@@ -131,14 +130,13 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
      * @param resource The resource to be added to the tree
      * @param parent The parent of the specified resource
      */
-    @Override
     public synchronized void add(T resource, T parent) {
         //TODO add checks
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
         addOrdered(parentTreeItem, treeItem);
-        this.treePersistence.add(resource, parent);
+        treePersistence.save(this);
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator
@@ -160,7 +158,7 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
     private void addOrderedDrop(TreeItem<T> target, TreeItem<T> child) {
         addOrdered(target,child);
         tree.getSelectionModel().select(child);
-        this.treePersistence.update(child.getValue()); //TODO drop should call move not addOrderedDrop and then update persistence
+        treePersistence.save(this);
     }
 
     public Parent getWidget() {
@@ -175,20 +173,18 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
             TreeItem<T> currentParentTreeItem = nodeTreeItem.getParent();
             currentParentTreeItem.getChildren().remove(nodeTreeItem);
             addOrdered(newParentTreeItem, nodeTreeItem);
-            this.treePersistence.move(node, parent);
+            treePersistence.save(this);
         }
     }
 
-    @Override
     public synchronized void remove(T node) {
         //TODO add checks
         TreeItem<T> treeItem = resourceToTreeItemMap.remove(node);
         TreeItem<T> parent = treeItem.getParent();
         parent.getChildren().remove(treeItem);
-        this.treePersistence.remove(node);
+        treePersistence.save(this);
     }
 
-    @Override
     public void update(T node) {
         //TODO update display of the node in the tree and add checks
         T parent = this.getParent(node);
@@ -199,13 +195,12 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
         TreeItem<T> nodeItem = resourceToTreeItemMap.get(node);
         parentItem.getChildren().remove(nodeItem);
         addOrdered(parentItem, nodeItem);
-        this.treePersistence.update(node);
+        treePersistence.save(this);
     }
 
-    @Override
     public void load() {
         checkDependencies();
-        this.treePersistence.load();
+        this.treePersistence.load(this);
     }
 
     private void checkDependencies() {
@@ -220,13 +215,12 @@ public class ResourceTree<T> implements ResourceTreePersistence<T> {
         }
     }
 
-    @Override
     public void clear() {
         if (tree.getRoot() != null && tree.getRoot().getChildren() != null) {
             tree.getRoot().getChildren().clear();
         }
         resourceToTreeItemMap.clear();
-        this.treePersistence.clear();
+        treePersistence.save(this);
     }
 
     private boolean isValidDrop(TreeItem<T> source, TreeItem<T> target) {

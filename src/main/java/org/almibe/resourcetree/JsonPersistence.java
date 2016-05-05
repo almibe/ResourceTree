@@ -13,43 +13,16 @@ import java.util.*;
 public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     private final Gson gson = new Gson();
     private final File jsonFile;
-    private final ResourceTree<T> resourceTree;
     private final Type type;
     private boolean loading = false;
 
-    public JsonPersistence(File jsonFile, ResourceTree<T> resourceTree, Type type) {
+    public JsonPersistence(File jsonFile, Type type) {
         this.jsonFile = jsonFile;
-        this.resourceTree = resourceTree;
         this.type = type;
     }
 
     @Override
-    public void move(T node, T parent) {
-        if (!loading) writeJsonFile();
-    }
-
-    @Override
-    public void add(T node) {
-        if (!loading) writeJsonFile();
-    }
-
-    @Override
-    public void add(T node, T parent) {
-        if (!loading) writeJsonFile();
-    }
-
-    @Override
-    public void remove(T node) {
-        if (!loading) writeJsonFile();
-    }
-
-    @Override
-    public void update(T node) {
-        if (!loading) writeJsonFile();
-    }
-
-    @Override
-    public void load() {
+    public void load(ResourceTree<T> resourceTree) {
         if (!jsonFile.exists()) {
             return;
         }
@@ -85,11 +58,7 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
     }
 
     @Override
-    public void clear() {
-        writeJsonFile();
-    }
-
-    private void writeJsonFile() {
+    public void save(ResourceTree<T> resourceTree) {
         if (loading) return;
         List<TreeModel<T>> modelList = new ArrayList<>();
         List<TreeModel<T>> parents = new ArrayList<>();
