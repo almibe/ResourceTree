@@ -150,7 +150,7 @@ public class JsonPersistenceSpec extends Specification {
         String initialValueJson = reader.text
         println(initialValueJson)
         reader.close();
-        List<TreeModel<AdapterTestCase>> newValue = gson.fromJson(initialValueJson, AdapterTestCase.class)
+        List<TreeModel<AdapterTestCase>> newValue = gson.fromJson(initialValueJson, new TypeToken<List<TreeModel<AdapterTestCase>>>(){}.getType())
 
         then:
         initialValue.value == newValue.get(0).node.value
