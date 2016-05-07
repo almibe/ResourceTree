@@ -81,7 +81,7 @@ public class ResourceTree<T> {
         this.tree.getSelectionModel().select(-1);
     }
 
-    public List<T> getRootItems() {
+    public synchronized List<T> getRootItems() {
         List<T> returnList = new ArrayList<>();
         for (TreeItem<T> treeItem : tree.getRoot().getChildren()) {
             returnList.add(treeItem.getValue());
@@ -89,12 +89,12 @@ public class ResourceTree<T> {
         return returnList;
     }
 
-    public T getParent(T t) {
+    public synchronized T getParent(T t) {
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
         return treeItem.getParent().getValue(); //TODO add checking
     }
 
-    public List<T> getChildren(T t) {
+    public synchronized List<T> getChildren(T t) {
         List<T> children = new ArrayList<>();
         TreeItem<T> treeItem = this.resourceToTreeItemMap.get(t);
         if (treeItem == null) { return null; }
@@ -106,7 +106,7 @@ public class ResourceTree<T> {
         }
     }
 
-    public ReadOnlyListProperty<T> getResources() {
+    public synchronized ReadOnlyListProperty<T> getResources() {
         return new ReadOnlyListWrapper(resources); //TODO this needs testing
     }
 
@@ -161,7 +161,7 @@ public class ResourceTree<T> {
         treePersistence.save(this);
     }
 
-    public Parent getWidget() {
+    public synchronized Parent getWidget() {
         return this.tree;
     }
 
@@ -185,7 +185,7 @@ public class ResourceTree<T> {
         treePersistence.save(this);
     }
 
-    public void update(T node) {
+    public synchronized void update(T node) {
         //TODO update display of the node in the tree and add checks
         T parent = this.getParent(node);
         TreeItem<T> parentItem = resourceToTreeItemMap.get(parent);
@@ -198,7 +198,7 @@ public class ResourceTree<T> {
         treePersistence.save(this);
     }
 
-    public void load() {
+    public synchronized void load() {
         checkDependencies();
         this.treePersistence.load(this);
     }
@@ -215,7 +215,7 @@ public class ResourceTree<T> {
         }
     }
 
-    public void clear() {
+    public synchronized void clear() {
         if (tree.getRoot() != null && tree.getRoot().getChildren() != null) {
             tree.getRoot().getChildren().clear();
         }
