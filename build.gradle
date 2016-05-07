@@ -35,6 +35,7 @@ dependencies {
 }
 
 bundle {
+    instruction 'Import-Package', '*'
     instruction 'Export-Package', 'org.almibe.resourcetree.*'
     instruction 'Private-Package', '*;-split-package:=merge-first'
 }
