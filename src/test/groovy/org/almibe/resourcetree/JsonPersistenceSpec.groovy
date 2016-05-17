@@ -10,6 +10,9 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.JFXPanel
 import jdk.nashorn.internal.ir.annotations.Immutable
+import org.almibe.resourcetree.api.NestingRule
+import org.almibe.resourcetree.api.ResourceTreeEventHandler
+import org.almibe.resourcetree.api.ResourceTreeItemDisplay
 import org.almibe.resourcetree.api.ResourceTreePersistence
 import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
@@ -155,6 +158,21 @@ public class JsonPersistenceSpec extends Specification {
         then:
         initialValue.value == newValue.get(0).node.value
         initialValue.nameProperty.value == newValue.get(0).node.nameProperty.value
+    }
+
+    def 'test loading JsonPersistence with TypeAdapter'() {
+        given:
+        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, AdapterTestCase.class, new AdapterTestCaseAdapter())
+        ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
+
+        when:
+        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: new SimpleStringProperty("Alex"), value: 42.0f)
+        resourceTree.add(initialValue)
+        resourceTree.load()
+
+        then:
+        initialValue.value == resourceTree.getRootItems().first().value
+        initialValue.nameProperty.value == resourceTree.getRootItems().first().nameProperty.value
     }
 
     @Immutable
