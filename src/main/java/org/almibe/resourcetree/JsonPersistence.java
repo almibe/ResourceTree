@@ -39,6 +39,11 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
             List<TreeModel<T>> rootModels = gson.fromJson(reader, new TypeToken<List<TreeModel<T>>>(){}.getType());
             reader.close();
 
+            if (rootModels == null) {
+                loading = false;
+                return;
+            }
+
             Map<T, List<TreeModel<T>>> parentMap = new HashMap<>();
             Map<T, List<TreeModel<T>>> nextParentMap = new HashMap<>();
 
