@@ -1,4 +1,4 @@
-package org.almibe.resourcetree.demo;
+package org.almibe.resourcetree.demo.basic;
 
 
 public interface ParentResource extends Resource {

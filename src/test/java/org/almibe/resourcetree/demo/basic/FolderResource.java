@@ -1,4 +1,4 @@
-package org.almibe.resourcetree.demo;
+package org.almibe.resourcetree.demo.basic;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

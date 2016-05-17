@@ -1,4 +1,4 @@
-package org.almibe.resourcetree.demo;
+package org.almibe.resourcetree.demo.basic;
 
 import java.util.Comparator;
 
