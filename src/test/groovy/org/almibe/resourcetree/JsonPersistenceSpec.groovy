@@ -6,10 +6,10 @@ import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import groovy.transform.Immutable
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.JFXPanel
-import jdk.nashorn.internal.ir.annotations.Immutable
 import org.almibe.resourcetree.api.NestingRule
 import org.almibe.resourcetree.api.ResourceTreeEventHandler
 import org.almibe.resourcetree.api.ResourceTreeItemDisplay
