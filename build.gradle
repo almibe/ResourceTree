@@ -37,7 +37,6 @@ dependencies {
 bundle {
     instruction 'Import-Package', '*'
     instruction 'Export-Package', 'org.almibe.resourcetree.*'
-    instruction 'Private-Package', '*;-split-package:=merge-first'
 }
 
 //work around for not being able to load test resources, see http://stackoverflow.com/questions/25513788/intellij-cant-find-classpath-test-resource
