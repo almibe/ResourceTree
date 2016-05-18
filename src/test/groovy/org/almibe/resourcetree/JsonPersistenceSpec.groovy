@@ -6,7 +6,6 @@ import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import groovy.transform.Immutable
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.embed.swing.JFXPanel
@@ -175,7 +174,6 @@ public class JsonPersistenceSpec extends Specification {
         initialValue.nameProperty.value == resourceTree.getRootItems().first().nameProperty.value
     }
 
-    @Immutable
     class AdapterTestCase {
         StringProperty nameProperty
         Float value
