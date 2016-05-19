@@ -25,24 +25,20 @@ public class JsonPersistence<T> implements ResourceTreePersistence<T> {
 
     @Override
     public void load(ResourceTree<T> resourceTree) {
-        if (!jsonFile.exists()) {
+        if (!jsonFile.exists() || jsonFile.length() == 0) {
             return;
         }
         loading = true;
         try (Reader reader = new FileReader(jsonFile)) {
             JsonReader jsonReader = new JsonReader(reader);
 
-            if (!jsonReader.hasNext()) {
-                loading = false;
-                return;
+            if (jsonReader.hasNext()) {
+                jsonReader.beginArray();
+                while (jsonReader.peek() == JsonToken.BEGIN_OBJECT) {
+                    loadNode(jsonReader, resourceTree, null);
+                }
+                jsonReader.endArray();
             }
-
-            jsonReader.beginArray();
-            while (jsonReader.peek() == JsonToken.BEGIN_OBJECT) {
-                loadNode(jsonReader, resourceTree, null);
-            }
-            jsonReader.endArray();
-
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         } finally {
