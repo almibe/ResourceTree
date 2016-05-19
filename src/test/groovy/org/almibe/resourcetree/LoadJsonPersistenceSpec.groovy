@@ -1,6 +1,9 @@
 package org.almibe.resourcetree
 
 import com.google.gson.Gson
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.api.NestingRule
 import org.almibe.resourcetree.api.ResourceTreeEventHandler
@@ -24,6 +27,16 @@ public class LoadJsonPersistenceSpec extends Specification {
 
     ResourceTree<String> treeViewResourceTree
     ResourceTreePersistence<String> resourceTreePersistence;
+    TypeAdapter<String> stringTypeAdapter = new TypeAdapter<String>() {
+        @Override
+        void write(JsonWriter out, String value) throws IOException {
+            out.value(value)
+        }
+        @Override
+        String read(JsonReader jsonReader) throws IOException {
+            return jsonReader.nextString()
+        }
+    }
 
     def setup() {
 
@@ -32,7 +45,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'loading a non existent file should not throw an exception'() {
         given:
         File nonExistentFile = new File(temporaryFolder.root,'iDontExist.json')
-        resourceTreePersistence = new JsonPersistence<>(nonExistentFile)
+        resourceTreePersistence = new JsonPersistence<>(nonExistentFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -45,7 +58,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load empty file'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestEmptyFile.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -58,7 +71,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load json file with empty list'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestEmpty.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -71,7 +84,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load a single resource'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestSimple.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -84,7 +97,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load a tree with one level under root'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNested.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -99,7 +112,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load tree with out of order data'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestNestedOutOfOrder.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
@@ -116,7 +129,7 @@ public class LoadJsonPersistenceSpec extends Specification {
     def 'load deeply nested data'() {
         given:
         File jsonFile = new File(LoadJsonPersistenceSpec.class.getClassLoader().getResource("org/almibe/resourcetree/LoadTestDeeplyNested.json").toURI())
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, stringTypeAdapter)
         treeViewResourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:

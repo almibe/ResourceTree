@@ -6,8 +6,8 @@ import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import groovy.transform.Immutable
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
 import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.api.NestingRule
 import org.almibe.resourcetree.api.ResourceTreeEventHandler
@@ -36,7 +36,17 @@ public class JsonPersistenceSpec extends Specification {
 
     def setup() {
         jsonFile = temporaryFolder.newFile()
-        resourceTreePersistence = new JsonPersistence<>(jsonFile)
+        resourceTreePersistence = new JsonPersistence<>(jsonFile, new TypeAdapter<String>() {
+            @Override
+            void write(JsonWriter out, String value) throws IOException {
+                out.value(value)
+            }
+
+            @Override
+            String read(JsonReader jsonReader) throws IOException {
+                return jsonReader.nextString()
+            }
+        })
         treeViewResourceTree = new ResourceTree<>(null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
     }
 
@@ -138,14 +148,14 @@ public class JsonPersistenceSpec extends Specification {
 
     def 'test JsonPersistence with TypeAdapter'() {
         given:
-        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, AdapterTestCase.class, new AdapterTestCaseAdapter())
+        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, new AdapterTestCaseAdapter())
         ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
         GsonBuilder gsonBuilder = new GsonBuilder()
         gsonBuilder.registerTypeAdapter(AdapterTestCase.class, new AdapterTestCaseAdapter())
         Gson gson = gsonBuilder.create()
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: new SimpleStringProperty("Alex"), value: 42.0f)
+        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: "Alex", value: 42.0f)
         resourceTree.add(initialValue)
 
         Reader reader = new FileReader(jsonFile);
@@ -156,26 +166,27 @@ public class JsonPersistenceSpec extends Specification {
 
         then:
         initialValue.value == newValue.get(0).node.value
-        initialValue.nameProperty.value == newValue.get(0).node.nameProperty.value
+        initialValue.nameProperty.value == newValue.get(0).node.nameProperty
     }
 
     def 'test loading JsonPersistence with TypeAdapter'() {
         given:
-        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, AdapterTestCase.class, new AdapterTestCaseAdapter())
+        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, new AdapterTestCaseAdapter())
         ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: new SimpleStringProperty("Alex"), value: 42.0f)
+        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: "Alex", value: 42.0f)
         resourceTree.add(initialValue)
         resourceTree.load()
 
         then:
         initialValue.value == resourceTree.getRootItems().first().value
-        initialValue.nameProperty.value == resourceTree.getRootItems().first().nameProperty.value
+        initialValue.nameProperty.value == resourceTree.getRootItems().first().nameProperty
     }
 
+    @Immutable
     class AdapterTestCase {
-        StringProperty nameProperty
+        String nameProperty
         Float value
     }
 
