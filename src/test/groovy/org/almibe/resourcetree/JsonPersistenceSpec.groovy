@@ -147,74 +147,77 @@ public class JsonPersistenceSpec extends Specification {
 
     def 'test JsonPersistence with TypeAdapter'() {
         given:
-        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, new AdapterTestCaseAdapter())
-        ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
+        ResourceTreePersistence<Player> resourceTreePersistence = new JsonPersistence<>(jsonFile, new PlayerAdapter())
+        ResourceTree<Player> resourceTree = new ResourceTree<>(null, null, null, resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
         GsonBuilder gsonBuilder = new GsonBuilder()
-        gsonBuilder.registerTypeAdapter(AdapterTestCase.class, new AdapterTestCaseAdapter())
+        gsonBuilder.registerTypeAdapter(Player.class, new PlayerAdapter())
         Gson gson = gsonBuilder.create()
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(name: "Alex", value: 42.0f)
+        Player initialValue = new Player(name: "Alex", score: 42.0f)
         resourceTree.add(initialValue)
 
         Reader reader = new FileReader(jsonFile);
         String initialValueJson = reader.text
         println(initialValueJson)
         reader.close();
-        List<TreeModel<AdapterTestCase>> newValue = gson.fromJson(initialValueJson, new TypeToken<List<TreeModel<AdapterTestCase>>>(){}.getType())
+        List<TreeModel<Player>> newValue = gson.fromJson(initialValueJson, new TypeToken<List<TreeModel<Player>>>(){}.getType())
 
         then:
-        initialValue.value == newValue.get(0).node.value
+        initialValue.score == newValue.get(0).node.score
         initialValue.name == newValue.get(0).node.name
     }
 
     def 'test loading JsonPersistence with TypeAdapter'() {
         given:
-        ResourceTreePersistence<AdapterTestCase> resourceTreePersistence = new JsonPersistence<>(jsonFile, new AdapterTestCaseAdapter())
-        ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
+        ResourceTreePersistence<Player> resourceTreePersistence = new JsonPersistence<>(jsonFile, new PlayerAdapter())
+        ResourceTree<Player> resourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, new PlayerComparator())
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(name: "Alex", value: 42.0f)
+        Player initialValue = new Player(name: "Alex", score: 42.0f)
         resourceTree.add(initialValue)
         resourceTree.load()
 
         then:
-        initialValue.value == resourceTree.getRootItems().first().value
+        initialValue.score == resourceTree.getRootItems().first().score
         initialValue.name == resourceTree.getRootItems().first().name
     }
 
     @Immutable
-    class AdapterTestCase {
+    class Player {
         String name
-        Float value
+        Float score
     }
 
-    class AdapterTestCaseAdapter extends TypeAdapter<AdapterTestCase> {
+    class PlayerComparator implements Comparator<Player> {
         @Override
-        AdapterTestCase read(final JsonReader jsonReader) {
+        int compare(Player o1, Player o2) {
+            return Float.compare(o1.score, o2.score)
+        }
+    }
+
+    class PlayerAdapter extends TypeAdapter<Player> {
+        @Override
+        Player read(final JsonReader jsonReader) {
             def name
-            def value
+            def score
 
             jsonReader.beginObject()
-            while (jsonReader.hasNext()) {
-                switch (jsonReader.nextName()) {
-                    case "name":
-                        name = jsonReader.nextString()
-                        break
-                    case "value":
-                        value = (float)jsonReader.nextDouble()
-                        break
-                }
-            }
+
+            jsonReader.nextName() //name
+
+            name = jsonReader.nextString()
+            jsonReader.nextName() //score
+            score = (float)jsonReader.nextDouble()
             jsonReader.endObject()
-            return new AdapterTestCase(name:  name, value: value)
+            return new Player(name:  name, score: score)
         }
 
         @Override
-        void write(final JsonWriter jsonWriter, AdapterTestCase adapterTestCase) {
+        void write(final JsonWriter jsonWriter, Player adapterTestCase) {
             jsonWriter.beginObject()
             jsonWriter.name("name").value(adapterTestCase.name)
-            jsonWriter.name("value").value(adapterTestCase.value)
+            jsonWriter.name("score").value(adapterTestCase.score)
             jsonWriter.endObject()
         }
     }
