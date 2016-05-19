@@ -117,7 +117,6 @@ public class ResourceTree<T> {
      */
     public synchronized void add(T resource) {
         //TODO add checks
-        //return add(node, root.getValue()); TODO do this?
         TreeItem<T> treeItem = new TreeItem<>(resource);
         resourceToTreeItemMap.put(resource, treeItem);
         addOrdered(this.tree.getRoot(), treeItem);
@@ -132,11 +131,15 @@ public class ResourceTree<T> {
      */
     public synchronized void add(T resource, T parent) {
         //TODO add checks
-        TreeItem<T> treeItem = new TreeItem<>(resource);
-        resourceToTreeItemMap.put(resource, treeItem);
-        TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
-        addOrdered(parentTreeItem, treeItem);
-        treePersistence.save(this);
+        if (parent == null) {
+            add(resource);
+        } else {
+            TreeItem<T> treeItem = new TreeItem<>(resource);
+            resourceToTreeItemMap.put(resource, treeItem);
+            TreeItem<T> parentTreeItem = resourceToTreeItemMap.get(parent);
+            addOrdered(parentTreeItem, treeItem);
+            treePersistence.save(this);
+        }
     }
 
     //Note: if this method is too hacky, you can also just use FXCollections.sort with a custom Comparator

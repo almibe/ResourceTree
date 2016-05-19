@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import groovy.transform.Immutable
-import javafx.beans.property.SimpleStringProperty
 import javafx.embed.swing.JFXPanel
 import org.almibe.resourcetree.api.NestingRule
 import org.almibe.resourcetree.api.ResourceTreeEventHandler
@@ -155,7 +154,7 @@ public class JsonPersistenceSpec extends Specification {
         Gson gson = gsonBuilder.create()
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: "Alex", value: 42.0f)
+        AdapterTestCase initialValue = new AdapterTestCase(name: "Alex", value: 42.0f)
         resourceTree.add(initialValue)
 
         Reader reader = new FileReader(jsonFile);
@@ -166,7 +165,7 @@ public class JsonPersistenceSpec extends Specification {
 
         then:
         initialValue.value == newValue.get(0).node.value
-        initialValue.nameProperty.value == newValue.get(0).node.nameProperty
+        initialValue.name == newValue.get(0).node.name
     }
 
     def 'test loading JsonPersistence with TypeAdapter'() {
@@ -175,18 +174,18 @@ public class JsonPersistenceSpec extends Specification {
         ResourceTree<AdapterTestCase> resourceTree = new ResourceTree<>(Stub(NestingRule), Stub(ResourceTreeEventHandler), Stub(ResourceTreeItemDisplay), resourceTreePersistence, String.CASE_INSENSITIVE_ORDER)
 
         when:
-        AdapterTestCase initialValue = new AdapterTestCase(nameProperty: "Alex", value: 42.0f)
+        AdapterTestCase initialValue = new AdapterTestCase(name: "Alex", value: 42.0f)
         resourceTree.add(initialValue)
         resourceTree.load()
 
         then:
         initialValue.value == resourceTree.getRootItems().first().value
-        initialValue.nameProperty.value == resourceTree.getRootItems().first().nameProperty
+        initialValue.name == resourceTree.getRootItems().first().name
     }
 
     @Immutable
     class AdapterTestCase {
-        String nameProperty
+        String name
         Float value
     }
 
@@ -200,7 +199,7 @@ public class JsonPersistenceSpec extends Specification {
             while (jsonReader.hasNext()) {
                 switch (jsonReader.nextName()) {
                     case "name":
-                        name = new SimpleStringProperty(jsonReader.nextString())
+                        name = jsonReader.nextString()
                         break
                     case "value":
                         value = (float)jsonReader.nextDouble()
@@ -208,13 +207,13 @@ public class JsonPersistenceSpec extends Specification {
                 }
             }
             jsonReader.endObject()
-            return new AdapterTestCase(nameProperty:  name, value: value)
+            return new AdapterTestCase(name:  name, value: value)
         }
 
         @Override
         void write(final JsonWriter jsonWriter, AdapterTestCase adapterTestCase) {
             jsonWriter.beginObject()
-            jsonWriter.name("name").value(adapterTestCase.nameProperty.value)
+            jsonWriter.name("name").value(adapterTestCase.name)
             jsonWriter.name("value").value(adapterTestCase.value)
             jsonWriter.endObject()
         }
